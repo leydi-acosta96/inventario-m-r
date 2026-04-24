@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reportes</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<h1>Reportes del Sistema</h1>
+
+<div>
+
+<label>Fecha inicio</label>
+<input type="date" id="fechaInicio">
+
+<label>Fecha fin</label>
+<input type="date" id="fechaFin">
+
+<label>Emprendedora</label>
+<select id="filtroEmprendedora"></select>
+
+<button onclick="generarReporte()">Generar</button>
+
+</div>
+
+<h2>Resumen</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Ventas</h3>
+<p id="totalVentas">0</p>
+</div>
+
+<div class="card">
+<h3>Productos Vendidos</h3>
+<p id="productosVendidos">0</p>
+</div>
+
+<div class="card">
+<h3>Inventario Actual</h3>
+<p id="inventarioActual">0</p>
+</div>
+
+</div>
+
+<h2>Inventario</h2>
+
+<table>
+<thead>
+<tr>
+<th>Producto</th>
+<th>Stock</th>
+<th>Estado</th>
+</tr>
+</thead>
+
+<tbody id="tablaInventario"></tbody>
+
+</table>
+
+<script src="auth.js"></script>
+<script>
+validarRol(["admin","emprendedora"]);
+</script>
+
+<script src="reportes.js"></script>
+
+</body>
+</html>

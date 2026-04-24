@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Administrador | Mansión Rosé</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+  <aside class="sidebar">
+    <h2>Mansión Rosé</h2>
+
+    <ul>
+      <li onclick="mostrarSeccion('inicio')">Inicio</li>
+      <li onclick="mostrarSeccion('usuarios')">Usuarios</li>
+      <li onclick="mostrarSeccion('productos')">Productos</li>
+      <li onclick="mostrarSeccion('ventas')">Ventas</li>
+      <li onclick="mostrarSeccion('reportes')">Reportes</li>
+    </ul>
+
+    <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+  </aside>
+
+  <main class="contenido">
+
+    <header>
+      <h1>Panel Administrador</h1>
+      <div>
+        Bienvenida: <strong id="usuarioActivo"></strong>
+      </div>
+    </header>
+
+    <section id="inicio" class="seccion">
+      <h2>Bienvenida</h2>
+      <p>Administra tu sistema Mansión Rosé</p>
+    </section>
+
+    <section id="usuarios" class="seccion" style="display:none;">
+      <h2>Gestión de Usuarios</h2>
+      <button onclick="window.location.href='usuarios.html'">
+        Ir a Usuarios
+      </button>
+    </section>
+
+    <section id="productos" class="seccion" style="display:none;">
+      <h2>Productos</h2>
+      <button onclick="window.location.href='productos.html'">
+        Ir a Productos
+      </button>
+    </section>
+
+    <section id="ventas" class="seccion" style="display:none;">
+      <h2>Ventas</h2>
+      <button onclick="window.location.href='ventas.html'">
+        Ir a Ventas
+      </button>
+    </section>
+
+    <section id="ventas" class="seccion" style="display:none;">
+      <h2>Reportes</h2>
+      <button onclick="window.location.href='reportes.html'">
+        Ir a Reportes
+      </button>
+    </section>
+
+  </main>
+
+</div>
+
+<!--script src="dashboard_admin.js"></script>-->
+
+</body>
+</html>

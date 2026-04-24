@@ -1,0 +1,81 @@
+<!DOCTYPE html> 
+<html lang="es">
+ <head> <meta charset="UTF-8"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<title>Productos</title>
+ <link rel="stylesheet" href="styles.css"> 
+</head> 
+<body> 
+<div class="acciones-superior"> 
+	<button onclick="volverPagina()" class="btn-top volver"> ← Volver </button>
+	<button onclick="logout()" class="btn-top cerrar"> Cerrar sesión </button> 
+</div> 
+	<h1>Gestión de Productos</h1> 
+<button onclick="mostrarFormulario()">+ Nuevo Producto</button>
+  <form id="formProducto" style="display:none;">
+ 
+<table>
+<tr>
+ <th> <label>Código</label>
+ <input type="text" id="codigoProducto" required>
+ </th>
+
+
+
+ <th><label>Emprendimiento</label> 
+  <select id="emprendimiento"></select>
+ </th> 
+</tr>
+
+<tr>
+ <th><label>Nombre</label>
+  <input type="text" id="nombreProducto" required>
+ </th>
+
+ <th><label>Categoría</label> 
+ <input type="text" id="categoriaProducto">
+ </th>
+</tr>
+
+<tr>
+ <th><label>Precio</label> 
+  <input type="number" id="precioProducto" required> 
+ </th>
+
+<th><label>Stock</label>
+  <input type="number" id="stock" required>
+ </th>
+</tr>
+
+ <th><label>Estado</label> 
+  <select id="estadoProducto"> 
+  <option value="Activo">Activo</option> 
+  <option value="Inactivo">Inactivo</option> 
+ </th>
+
+<th></select> <button type="submit">Guardar</button></th>
+</table>
+</form>
+
+
+ <h2>Listado de Productos</h2>
+ <input type="text" id="buscarProducto" placeholder="Buscar..."> 
+<table>
+ <thead> 
+  <tr> 
+   <th>Producto</th> 
+   <th>Precio</th> 
+   <th>Stock</th> 
+   <th>Emprendimiento</th>
+   <th>Acciones</th> 
+  </tr> 
+ </thead> 
+
+<tbody id="tablaProductos">
+</tbody> 
+</table> 
+
+<script src="productos.js">
+  </script>
+ </body> 
+</html>

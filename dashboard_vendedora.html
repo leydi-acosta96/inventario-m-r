@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Vendedora</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Panel Vendedora</h1>
+
+    <div class="header-buttons">
+        <button onclick="volver()" class="btn-volver">← Volver</button>
+        <button onclick="cerrarSesion()" class="btn-logout">Cerrar sesión</button>
+    </div>
+</div>
+
+<div class="dashboard">
+
+    <div class="card" onclick="location.href='ventas.html'">
+        <h3>Registrar Venta</h3>
+        <p>Registrar ventas de productos</p>
+    </div>
+
+    <div class="card" onclick="location.href='productos.html'">
+        <h3>Ver Productos</h3>
+        <p>Consultar inventario disponible</p>
+    </div>
+
+    <div class="card" onclick="location.href='mis_ventas.html'">
+        <h3>Mis Ventas</h3>
+        <p>Ver historial de ventas</p>
+    </div>
+
+</div>
+
+<!--script src="dashboard_vendedora.js"></script>
+
+</body>
+</html>

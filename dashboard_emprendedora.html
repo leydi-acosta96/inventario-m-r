@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Emprendedora</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="header-sistema">
+    <h2 id="nombreEmprendimiento">Mi Emprendimiento</h2>
+    <button type="button" class="logout-btn" onclick="logout()">Cerrar sesión</button>
+</div>
+
+<div class="container">
+
+    <h1>Panel Emprendedora</h1>
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>Productos</h3>
+            <p>Gestionar</p>
+            <button type="button" onclick="irProductos()">Ir</button>
+        </div>
+
+        <div class="card">
+            <h3>Ventas</h3>
+            <p>Registrar</p>
+            <button type="button" onclick="irVentas()">Ir</button>
+        </div>
+
+        <div class="card">
+            <h3>Inventario</h3>
+            <p>Ver stock</p>
+            <button type="button" onclick="irInventario()">Ir</button>
+        </div>
+
+    </div>
+
+    <h2>Alertas de inventario</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Stock</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+
+        <tbody id="alertasStock"></tbody>
+
+    </table>
+
+</div>
+
+<!--script src="dashboard_emprendedora.js"></script>-->
+
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestión de Usuarios | Mansión Rosé</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="acciones-superior">
+
+<button onclick="volverPagina()" class="btn-top volver">
+← Volver
+</button>
+
+<button onclick="logout()" class="btn-top cerrar">
+Cerrar sesión
+</button>
+
+</div>
+</div>
+
+<section class="seccion">
+
+<h2>Gestión de Usuarios</h2>
+
+<button onclick="mostrarFormulario()">+ Nuevo Usuario</button> 
+
+
+<form id="formUsuario" style="display:none;" onsubmit="guardarUsuario(event)">
+
+<input type="hidden" id="idUsuario">
+
+<label>Nombre</label>
+<input type="text" id="nombre" required>
+
+<label>Cédula</label>
+<input type="text" id="cedula">
+
+<label>Rol</label>
+<select id="rol" required onchange="mostrarCamposRol()">
+  <option value="">Seleccionar</option>
+  <option value="emprendedora">Emprendedora</option>
+  <option value="vendedora">Vendedora</option>
+  <option value="admin">Admin</option>
+</select>
+
+<div id="camposEmprendimiento" style="display:none;">
+
+<label>Nombre del emprendimiento</label>
+<input type="text" id="emprendimiento">
+
+<label>Contacto</label>
+<input type="text" id="contacto">
+
+<label>Instagram</label>
+<input type="text" id="instagram">
+
+<label>Correo</label>
+<input type="email" id="correo">
+
+</div>
+
+<label>Estado</label>
+<select id="estado">
+  <option value="Activo">Activo</option>
+  <option value="Inactivo">Inactivo</option>
+</select>
+
+
+<button type="submit">Guardar</button> 
+
+
+
+
+
+<div id="panelCodigo" style="display:none; margin-top:20px;">
+    <h3>Código de Acceso</h3>
+    <p>Código generado: <strong id="codigoGenerado"></strong></p>
+
+    <button type="button" onclick="copiarCodigo()">Copiar código</button>
+    <button type="button" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+</div>
+
+</form>
+
+</section>
+
+<section class="seccion">
+
+
+
+<h2>Listado de Usuarios</h2>
+
+<input type="text" id="buscarUsuario" placeholder="Buscar...">
+
+<table>
+<thead>
+<tr>
+<th>Nombre</th>
+<th>Rol</th>
+<th>Emprendimiento</th>
+<th>Estado</th>
+<th>Acciones</th>
+</tr>
+</thead>
+
+<tbody id="tablaUsuarios"></tbody>
+
+</table>
+
+</section>
+
+
+</div>
+<script src="usuarios.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Ventas</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+
+<div class="venta-container">
+
+<h1>Registro de Venta</h1>
+
+<div class="venta-header">
+
+<div>
+<label>Emprendimiento</label>
+<select id="emprendimientoVenta">
+<option value="">Seleccionar</option>
+</select>
+</div>
+
+<div>
+<label>Canal de Venta</label>
+<select id="medioVenta">
+<option value="Showroom">Showroom</option>
+<option value="WhatsApp">WhatsApp</option>
+<option value="Instagram">Instagram</option>
+<option value="Tienda Física">Tienda Física</option>
+</select>
+</div>
+
+</div>
+
+
+<div class="venta-agregar">
+
+<select id="productoVenta">
+<option value="">Seleccionar producto</option>
+</select>
+
+<input 
+type="number" 
+id="cantidadVenta" 
+placeholder="Cantidad"
+min="1"
+>
+
+<button type="button" onclick="agregarProducto()">
+Agregar
+</button>
+
+</div>
+
+
+<table class="tabla-factura">
+
+<thead>
+<tr>
+<th>Emprendimiento</th>
+<th>Producto</th>
+<th>Cantidad</th>
+<th>Precio</th>
+<th>Total</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody id="detalleVenta"></tbody>
+
+</table>
+
+
+<div class="venta-total">
+
+<h2>Total: $ <span id="totalVenta">0</span></h2>
+
+<button id="btnRegistrarVenta">
+Registrar Venta
+</button>
+
+
+</div>
+
+<div class="barra-superior">
+
+<button onclick="volverPagina()" class="btn-volver">
+← Volver
+</button>
+
+<button onclick="logout()" class="btn-logout">
+Cerrar sesión
+</button>
+
+</div>
+</div>
+
+<script src="ventas.js"></script>
+
+</body>
+</html>
