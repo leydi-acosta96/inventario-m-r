@@ -41,9 +41,9 @@ function configurarFormulario(){
 	const select = document.getElementById("emprendimiento");
 		
 		if(rol === "emprendedora"){
-		 select.innerHTML = '<option value= ${usuario.emprendimiento}> 
-		 ${usuario.emprendimiento} 
-		</option>'
+		 select.innerHTML = <option value="${usuario.emprendimiento}"> 
+		 ${usuario.emprendimiento}
+		</option>
 			
 		 ; 
 		 select.disabled = true; 
