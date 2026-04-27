@@ -60,7 +60,7 @@ fetch(API_USUARIOS)
 .then(res => res.json())
 .then(data => {
 const select = document.getElementById("emprendimiento"); 
-select.innerHTML = '<option value="">Seleccionar</option>';
+select.innerHTML = `<option value="">Seleccionar</option>`;
 
 data.usuarios.forEach(u => {
 	if(u.rol && u.rol.toLowerCase() === "emprendedora"){
