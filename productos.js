@@ -7,7 +7,7 @@ const usuario = JSON.parse(sessionStorage.getItem("usuario"));
  if(!usuario){ 
 	window.location.href = "index.html";
  }
-
+  
 
 const rol = usuario.rol.trim().toLowerCase();
 
