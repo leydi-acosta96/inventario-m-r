@@ -131,7 +131,7 @@ return;
 
 }
 
-tabla.innerHTML += <tr> 
+tabla.innerHTML += `<tr> 
 <td>${p.codigoProducto}</td> 
 <td>${p.nombreProducto}</td> 
 <td>${p.categoriaProducto}</td> 
@@ -139,7 +139,7 @@ tabla.innerHTML += <tr>
 <td>${p.stock}</td> 
 <td>${p.emprendimiento}</td> 
 <td>${p.estadoProducto}</td> 
-</tr> 
+</tr>`
 ;
 
 }); 
