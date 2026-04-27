@@ -56,7 +56,7 @@ function guardarUsuario(e){
     }
   };
 
-  fetch(API_URL,{
+  fetch(API_URL{
     method:"POST",
     headers:{
       "Content-Type":"application/json"
