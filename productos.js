@@ -65,9 +65,9 @@ select.innerHTML = '<option value="">Seleccionar</option>';
 data.usuarios.forEach(u => {
 	if(u.rol && u.rol.toLowerCase() === "emprendedora"){
 	select.innerHTML +=
-	<option value="${u.emprendimiento}">
+		´<option value="${u.emprendimiento}">
 	${u.emprendimiento}
-	</option>;
+	</option>´;
 }
 
 });
