@@ -41,20 +41,17 @@ function configurarFormulario(){
 	const select = document.getElementById("emprendimiento");
 		
 		if(rol === "emprendedora"){
-		 select.innerHTML =
-		  <option value="${usuario.emprendimiento}"> 
-		 ${usuario.emprendimiento} 
-		 </option> 
-		 ; 
-		 select.disabled = true; 
+		 select.innerHTML = `<option value="${usuario.emprendimiento}">
+		 ${usuario.emprendimiento}
+		 </option>`;
+		 
+			select.disabled = true; 
 		 }
 
 		if(rol === "admin"){
 		 cargarEmprendimientos();
 		 } 
 		}
-
-
 
 	// CARGAR EMPRENDIMIENTOS 
 function cargarEmprendimientos(){
