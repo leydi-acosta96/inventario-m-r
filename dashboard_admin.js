@@ -5,7 +5,7 @@ if(!usuario){
     window.location.href = "index.html";
 }
 
-//const API_PRODUCTOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/productos";
+const API_PRODUCTOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/productos";
 
 // CARGA INICIAL
 document.addEventListener("DOMContentLoaded", () => {
