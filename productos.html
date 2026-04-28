@@ -17,23 +17,29 @@
 <table>
 <tr>
  <th> <label>Código</label>
- <input type="text" id="codigoProducto" required>
+ <input type="text" id="codigoProducto" readonly>
  </th>
-
-
-
- <th><label>Emprendimiento</label> 
-  <select id="emprendimiento"></select>
- </th> 
-</tr>
 
 <tr>
  <th><label>Nombre</label>
   <input type="text" id="nombreProducto" required>
  </th>
 
- <th><label>Categoría</label> 
- <input type="text" id="categoriaProducto">
+ <th><label>Emprendimiento</label> 
+  <select id="emprendimiento"></select>
+ </th> 
+</tr>
+
+
+
+ <th><label>Categoría</label>
+      <select id="categoriaProducto" required>
+        <option value="">Seleccione una categoría</option>
+        <option value="Accesorios">Accesorios</option>
+        <option value="Ropa">Ropa</option>
+        <option value="Cosmetica">Cosmética</option>
+        <option value="Vestidos de baño">Vestidos de baño</option>
+      </select>
  </th>
 </tr>
 
