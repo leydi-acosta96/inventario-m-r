@@ -86,8 +86,7 @@ producto:{
 codigoProducto: document.getElementById("codigoProducto").value,
 codigoProducto: document.getElementById("codigoProducto").value,
 emprendimiento: document.getElementById("emprendimiento").value,
-categoriaProducto:
-document.getElementById("categoriaProducto").value,
+categoriaProducto: document.getElementById("categoriaProducto").value,
 precioProducto: document.getElementById("precioProducto").value,
 stock: document.getElementById("stock").value,
 estadoProducto: document.getElementById("estadoProducto").value
@@ -134,9 +133,9 @@ return;
 tabla.innerHTML += `<tr> 
 <td>${p.codigoProducto}</td> 
 <td>${p.nombreProducto}</td> 
-<td>${p.categoriaProducto}</td> 
-<td>${p.precioProducto}</td> 
+<td>${p.categoriaProducto}</td>
 <td>${p.stock}</td> 
+<td>${p.precioProducto}</td> 
 <td>${p.emprendimiento}</td> 
 <td>${p.estadoProducto}</td> 
 </tr>`
