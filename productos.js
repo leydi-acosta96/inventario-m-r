@@ -79,7 +79,7 @@ data.usuarios.forEach(u => {
 const formProducto = document.getElementById("formProducto");
 const selectCategoria = document.getElementById("categoriaProducto");
 const inputCodigo = document.getElementById("codigoProducto");
-const selectEmprendedora = document.getElementById("emprendedoraId");
+const selectEmprendimiento = document.getElementById("emprendimiento");
 
 
 function generarCodigoProducto() {
