@@ -76,6 +76,34 @@ data.usuarios.forEach(u => {
 
 }
 
+ 		// CODIGO DE PRODUCTO
+
+function generarCodigoProducto() {
+  const categoria = selectCategoria.value;
+
+  if (!categoria) {
+    inputCodigo.value = "";
+    return;
+  }
+
+  const prefijo = categoriasCodigo[categoria];
+
+  fetch(`${API_BASE}/productos`, { headers: HEADERS })
+    .then(res => res.json())
+    .then(data => {
+      const productosCategoria = data.productos.filter(
+        p => p.categoriaProducto === categoria
+      );
+
+      const consecutivo = productosCategoria.length + 1;
+      const numero = String(consecutivo).padStart(3, "0");
+
+      inputCodigo.value = `${prefijo}-${numero}`;
+    })
+    .catch(err => console.error("Error generando código:", err));
+}
+
+
 	// GUARDAR PRODUCTO
 function guardarProducto(e){
 e.preventDefault();
