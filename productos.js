@@ -78,6 +78,8 @@ data.usuarios.forEach(u => {
 
  		// CODIGO DE PRODUCTO
 
+const inputCodigo = document.getElementById("codigoProducto");
+
 function generarCodigoProducto() {
   const categoria = selectCategoria.value;
 
