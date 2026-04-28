@@ -83,10 +83,10 @@ e.preventDefault();
 
 const producto = {
 producto:{
-codigoProducto: document.getElementById("codigoProducto").value,
-codigoProducto: document.getElementById("codigoProducto").value,
-emprendimiento: document.getElementById("emprendimiento").value,
-categoriaProducto: document.getElementById("categoriaProducto").value,
+codigoProducto: inputCodigo.value,
+nombreProducto: document.getElementById("nombreProducto").value,
+emprendedoraId: selectEmprendedora.value,
+categoriaProducto: selectCategoria.value,
 precioProducto: document.getElementById("precioProducto").value,
 stock: document.getElementById("stock").value,
 estadoProducto: document.getElementById("estadoProducto").value
