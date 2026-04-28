@@ -117,7 +117,7 @@ const producto = {
 producto:{
 codigoProducto: inputCodigo.value,
 nombreProducto: document.getElementById("nombreProducto").value,
-emprendedoraId: selectEmprendedora.value,
+emprendimiento: selectEmprendimiento.value,
 categoriaProducto: selectCategoria.value,
 precioProducto: document.getElementById("precioProducto").value,
 stock: document.getElementById("stock").value,
