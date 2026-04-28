@@ -7,9 +7,7 @@ const usuario = JSON.parse(sessionStorage.getItem("usuario"));
  if(!usuario){ 
 	window.location.href = "index.html";
  }
-  
-
-const rol = usuario.rol.trim().toLowerCase();
+  const rol = usuario.rol.trim().toLowerCase();
 
   	// PERMITIR SOLO ADMIN Y EMPRENDEDORA
        
@@ -78,7 +76,11 @@ data.usuarios.forEach(u => {
 
  		// CODIGO DE PRODUCTO
 
+const formProducto = document.getElementById("formProducto");
+const selectCategoria = document.getElementById("categoriaProducto");
 const inputCodigo = document.getElementById("codigoProducto");
+const selectEmprendedora = document.getElementById("emprendedoraId");
+
 
 function generarCodigoProducto() {
   const categoria = selectCategoria.value;
