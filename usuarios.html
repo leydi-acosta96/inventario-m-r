@@ -1,36 +1,28 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestión de Usuarios | Mansión Rosé</title>
-<link rel="stylesheet" href="styles.css">
-</head>
+  <html lang="es">
+   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios | Mansión Rosé</title>
+    <link rel="stylesheet" href="styles.css">
+   </head>
+   <body>
+     <div class="acciones-superior">
+        <button onclick="volverPagina()" class="btn-top volver">
+        ← Volver
+        </button>
 
-<body>
-
-<div class="acciones-superior">
-
-<button onclick="volverPagina()" class="btn-top volver">
-← Volver
-</button>
-
-<button onclick="logout()" class="btn-top cerrar">
-Cerrar sesión
-</button>
-
-</div>
-</div>
+        <button onclick="logout()" class="btn-top cerrar">
+        Cerrar sesión
+        </button>
+     </div>
 
 <section class="seccion">
+  <h2>Gestión de Usuarios</h2>
+  
+  <button type="button" onclick="mostrarFormulario()"> Nuevo Usuario</button> 
 
-<h2>Gestión de Usuarios</h2>
-
-<button onclick="mostrarFormulario()"> Nuevo Usuario</button> 
-
-
-<form id="formUsuario" style="display:none;" onsubmit="guardarUsuario(event)">
-
+<form id="formUsuario" style="display:none;"> <!--onsubmit="guardarUsuario(event)">-->
 <input type="hidden" id="idUsuario">
 
 <label>Nombre</label>
@@ -69,28 +61,20 @@ Cerrar sesión
   <option value="Inactivo">Inactivo</option>
 </select>
 
-
 <button type="submit">Guardar</button> 
+</form>
 
-
-
-
-
-<div id="panelCodigo" style="display:none; margin-top:20px;">
+<!--<div id="panelCodigo" style="display:none; margin-top:20px;">
     <h3>Código de Acceso</h3>
     <p>Código generado: <strong id="codigoGenerado"></strong></p>
 
     <button type="button" onclick="copiarCodigo()">Copiar código</button>
     <button type="button" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
-</div>
-
-</form>
+</div>-->
 
 </section>
 
 <section class="seccion">
-
-
 
 <h2>Listado de Usuarios</h2>
 
@@ -110,12 +94,7 @@ Cerrar sesión
 <tbody id="tablaUsuarios"></tbody>
 
 </table>
-
 </section>
-
-
-</div>
 <script src="usuarios.js"></script>
-
 </body>
 </html>
