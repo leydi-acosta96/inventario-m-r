@@ -5,12 +5,17 @@ if(!usuario){
     window.location.href = "index.html";
 }
 
-//const API_PRODUCTOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/productos";
+// API PRODUCTOS
+const API_PRODUCTOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/productos";
 
 document.addEventListener("DOMContentLoaded", () => {
+    //MOSTRAR NOMBRE DEL EMPRENDIMIENTO
+   
+    const nombreEmprendimiento = document.getElementById("nombreEmprendimiento");
 
-    document.getElementById("nombreEmprendimiento").textContent =
-    usuario.emprendimiento;
+    if (nombreEmprendimiento) {
+        nombreEmprendimiento.textContent = usuario.emprendimiento || "Mi Emprendimiento";
+    }
 
     cargarAlertas();
 
@@ -38,31 +43,31 @@ function logout(){
 function cargarAlertas(){
 
 fetch(API_PRODUCTOS)
-.then(res => res.json())
-.then(data => {
+        .then(res => res.json())
+        .then(data => {
 
-const tabla = document.getElementById("alertasStock");
-tabla.innerHTML = "";
+            const tabla = document.getElementById("alertasStock");
+            tabla.innerHTML = "";
+            
+            data.productos.forEach(p => {
+            
+            if(
+            p.emprendimiento === usuario.emprendimiento &&
+            Number(p.stock) <= 5
+            ){
 
-data.productos.forEach(p => {
-
-if(
-p.emprendimiento === usuario.emprendimiento &&
-Number(p.stock) <= 5
-){
-
-tabla.innerHTML += `
-<tr>
-<td>${p.nombreProducto}</td>
-<td>${p.stock}</td>
-<td style="color:red">Stock Bajo</td>
-</tr>
-`;
-
-}
-
-});
-
-});
-
-}
+                    tabla.innerHTML += `
+                    <tr>
+                    <td>${p.nombreProducto}</td>
+                    <td>${p.stock}</td>
+                    <td style="color:red">Stock Bajo</td>
+                    </tr>
+                    `;
+                    
+                    }
+                    
+                });
+                    
+            });
+                    
+         }
