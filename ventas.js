@@ -1,8 +1,8 @@
-//const API_USUARIOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/usuarios";
-//const usuario = JSON.parse(sessionStorage.getItem("usuario"));
+const API_USUARIOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/usuarios";
+const usuario = JSON.parse(sessionStorage.getItem("usuario"));
 
-//const API_PRODUCTOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/productos";
-//const API_VENTAS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/ventas";
+const API_PRODUCTOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/productos";
+const API_VENTAS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/ventas";
 
 let carrito = [];
 let productos = [];
