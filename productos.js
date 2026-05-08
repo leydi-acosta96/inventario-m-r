@@ -57,11 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// GUARDAR
+// GUARDAR PRODUCTO
 formProducto.addEventListener("submit", guardarProducto);
 
 
-// BUSCAR
+// BUSCAR PRODUCTO
 document.getElementById("buscarProducto")
 .addEventListener("keyup", buscarProducto);
 
@@ -99,8 +99,9 @@ function configurarFormulario() {
         selectEmprendimiento.value =
         usuario.emprendimiento;
 
-        // BLOQUEAR SIN DESHABILITAR
-        selectEmprendimiento.style.pointerEvents = "none";
+        // BLOQUEAR SELECT
+        selectEmprendimiento.style.pointerEvents =
+        "none";
 
         selectEmprendimiento.style.background =
         "#f5f5f5";
@@ -184,7 +185,7 @@ function generarCodigoProducto() {
 
     .then(data => {
 
-        // FILTRAR CATEGORÍA
+        // FILTRAR PRODUCTOS CATEGORÍA
         const productosCategoria =
         data.productos.filter(p =>
 
@@ -247,7 +248,11 @@ function guardarProducto(e) {
             nombreProducto:
             document.getElementById("nombreProducto").value,
 
-            emprendimiento:
+            // IMPORTANTE:
+            // ESTA COLUMNA EN SHEETY SE LLAMA:
+            // emprendedora
+
+            emprendedora:
             emprendimientoFinal,
 
             categoriaProducto:
@@ -265,6 +270,10 @@ function guardarProducto(e) {
         }
 
     };
+
+
+    // VERIFICAR EN CONSOLA
+    console.log(producto);
 
 
     // GUARDAR
@@ -285,7 +294,9 @@ function guardarProducto(e) {
 
     .then(res => res.json())
 
-    .then(() => {
+    .then(data => {
+
+        console.log(data);
 
         alert("Producto guardado correctamente");
 
@@ -349,7 +360,7 @@ function cargarProductos() {
 
                 rol === "emprendedora" &&
 
-                p.emprendimiento !==
+                p.emprendedora !==
                 usuario.emprendimiento
 
             ) {
@@ -372,7 +383,7 @@ function cargarProductos() {
 
                     <td>${p.precioProducto}</td>
 
-                    <td>${p.emprendimiento}</td>
+                    <td>${p.emprendedora || ""}</td>
 
                     <td>${p.estadoProducto}</td>
 
