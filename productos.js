@@ -9,29 +9,41 @@ if (!usuario) {
     window.location.href = "index.html";
 }
 
+
 const rol = usuario.rol.trim().toLowerCase();
 
 
-// PERMITIR SOLO ADMIN Y EMPRENDEDORA
+// VALIDAR ACCESO
 if (rol !== "admin" && rol !== "emprendedora") {
+
     alert("No tienes acceso a productos");
+
     window.location.href = "index.html";
+
 }
 
 
 // ELEMENTOS
 const formProducto = document.getElementById("formProducto");
-const selectCategoria = document.getElementById("categoriaProducto");
-const inputCodigo = document.getElementById("codigoProducto");
-const selectEmprendimiento = document.getElementById("emprendimiento");
+
+const selectCategoria =
+document.getElementById("categoriaProducto");
+
+const inputCodigo =
+document.getElementById("codigoProducto");
+
+const selectEmprendimiento =
+document.getElementById("emprendimiento");
 
 
-// PREFIJOS CATEGORÍA
+// PREFIJOS
 const categoriasCodigo = {
+
     "Accesorios": "ACC",
     "Ropa": "ROP",
     "Cosmetica": "COS",
     "Vestidos de baño": "VDB"
+
 };
 
 
@@ -39,15 +51,22 @@ const categoriasCodigo = {
 document.addEventListener("DOMContentLoaded", () => {
 
     configurarFormulario();
+
     cargarProductos();
 
 });
 
+
+// GUARDAR
 formProducto.addEventListener("submit", guardarProducto);
 
+
+// BUSCAR
 document.getElementById("buscarProducto")
 .addEventListener("keyup", buscarProducto);
 
+
+// GENERAR CÓDIGO AUTOMÁTICO
 selectCategoria.addEventListener("change", generarCodigoProducto);
 
 
@@ -57,14 +76,14 @@ function mostrarFormulario() {
     const form = document.getElementById("formProducto");
 
     form.style.display =
-        form.style.display === "block"
-        ? "none"
-        : "block";
+    form.style.display === "block"
+    ? "none"
+    : "block";
 
 }
 
 
-// CONFIGURAR FORMULARIO SEGÚN ROL
+// CONFIGURAR FORMULARIO
 function configurarFormulario() {
 
     // EMPRENDEDORA
@@ -76,13 +95,24 @@ function configurarFormulario() {
             </option>
         `;
 
-        selectEmprendimiento.disabled = true;
+        // ASIGNAR VALOR
+        selectEmprendimiento.value =
+        usuario.emprendimiento;
+
+        // BLOQUEAR SIN DESHABILITAR
+        selectEmprendimiento.style.pointerEvents = "none";
+
+        selectEmprendimiento.style.background =
+        "#f5f5f5";
 
     }
 
+
     // ADMIN
     if (rol === "admin") {
+
         cargarEmprendimientos();
+
     }
 
 }
@@ -92,7 +122,9 @@ function configurarFormulario() {
 function cargarEmprendimientos() {
 
     fetch(API_USUARIOS)
+
     .then(res => res.json())
+
     .then(data => {
 
         selectEmprendimiento.innerHTML =
@@ -116,8 +148,14 @@ function cargarEmprendimientos() {
         });
 
     })
+
     .catch(error => {
-        console.error("Error cargando emprendimientos:", error);
+
+        console.error(
+        "Error cargando emprendimientos:",
+        error
+        );
+
     });
 
 }
@@ -128,34 +166,53 @@ function generarCodigoProducto() {
 
     const categoria = selectCategoria.value;
 
+    // VALIDAR
     if (!categoria) {
+
         inputCodigo.value = "";
+
         return;
+
     }
 
+    // PREFIJO
     const prefijo = categoriasCodigo[categoria];
 
     fetch(API_PRODUCTOS)
+
     .then(res => res.json())
+
     .then(data => {
 
-        // FILTRAR PRODUCTOS DE ESA CATEGORÍA
-        const productosCategoria = data.productos.filter(p =>
+        // FILTRAR CATEGORÍA
+        const productosCategoria =
+        data.productos.filter(p =>
+
             p.categoriaProducto === categoria
+
         );
 
-        // GENERAR CONSECUTIVO
-        const consecutivo = productosCategoria.length + 1;
+        // CONSECUTIVO
+        const consecutivo =
+        productosCategoria.length + 1;
 
         // FORMATO 001
-        const numero = String(consecutivo).padStart(3, "0");
+        const numero =
+        String(consecutivo).padStart(3, "0");
 
         // CÓDIGO FINAL
-        inputCodigo.value = `${prefijo}-${numero}`;
+        inputCodigo.value =
+        `${prefijo}-${numero}`;
 
     })
+
     .catch(error => {
-        console.error("Error generando código:", error);
+
+        console.error(
+        "Error generando código:",
+        error
+        );
+
     });
 
 }
@@ -166,20 +223,9 @@ function guardarProducto(e) {
 
     e.preventDefault();
 
-    // VALIDAR EMPRENDIMIENTO
-    let emprendimientoFinal = "";
-
-    // SI ES EMPRENDEDORA
-    if (rol === "emprendedora") {
-
-        emprendimientoFinal = usuario.emprendimiento;
-
-    } else {
-
-        // SI ES ADMIN
-        emprendimientoFinal = selectEmprendimiento.value;
-
-    }
+    // EMPRENDIMIENTO FINAL
+    const emprendimientoFinal =
+    selectEmprendimiento.value;
 
     // VALIDAR
     if (!emprendimientoFinal) {
@@ -190,18 +236,22 @@ function guardarProducto(e) {
 
     }
 
+    // OBJETO PRODUCTO
     const producto = {
 
         producto: {
 
-            codigoProducto: inputCodigo.value,
+            codigoProducto:
+            inputCodigo.value,
 
             nombreProducto:
             document.getElementById("nombreProducto").value,
 
-            emprendimiento: emprendimientoFinal,
+            emprendimiento:
+            emprendimientoFinal,
 
-            categoriaProducto: selectCategoria.value,
+            categoriaProducto:
+            selectCategoria.value,
 
             precioProducto:
             document.getElementById("precioProducto").value,
@@ -217,27 +267,35 @@ function guardarProducto(e) {
     };
 
 
+    // GUARDAR
     fetch(API_PRODUCTOS, {
 
         method: "POST",
 
         headers: {
-            "Content-Type": "application/json"
+
+            "Content-Type":
+            "application/json"
+
         },
 
         body: JSON.stringify(producto)
 
     })
+
     .then(res => res.json())
+
     .then(() => {
 
         alert("Producto guardado correctamente");
 
+        // LIMPIAR FORMULARIO
         formProducto.reset();
 
+        // LIMPIAR CÓDIGO
         inputCodigo.value = "";
 
-        // RESTAURAR EMPRENDIMIENTO EMPRENDEDORA
+        // RESTAURAR EMPRENDIMIENTO
         if (rol === "emprendedora") {
 
             selectEmprendimiento.innerHTML = `
@@ -246,14 +304,22 @@ function guardarProducto(e) {
                 </option>
             `;
 
+            selectEmprendimiento.value =
+            usuario.emprendimiento;
+
         }
 
+        // RECARGAR TABLA
         cargarProductos();
 
     })
+
     .catch(error => {
 
-        console.error("Error guardando producto:", error);
+        console.error(
+        "Error guardando producto:",
+        error
+        );
 
         alert("Error al guardar producto");
 
@@ -266,7 +332,9 @@ function guardarProducto(e) {
 function cargarProductos() {
 
     fetch(API_PRODUCTOS)
+
     .then(res => res.json())
+
     .then(data => {
 
         const tabla =
@@ -278,51 +346,82 @@ function cargarProductos() {
 
             // FILTRAR EMPRENDEDORA
             if (
+
                 rol === "emprendedora" &&
-                p.emprendimiento !== usuario.emprendimiento
+
+                p.emprendimiento !==
+                usuario.emprendimiento
+
             ) {
+
                 return;
+
             }
 
             tabla.innerHTML += `
+
                 <tr>
+
                     <td>${p.codigoProducto}</td>
+
                     <td>${p.nombreProducto}</td>
+
                     <td>${p.categoriaProducto}</td>
+
                     <td>${p.stock}</td>
+
                     <td>${p.precioProducto}</td>
+
                     <td>${p.emprendimiento}</td>
+
                     <td>${p.estadoProducto}</td>
+
                 </tr>
+
             `;
 
         });
 
     })
+
     .catch(error => {
 
-        console.error("Error cargando productos:", error);
+        console.error(
+        "Error cargando productos:",
+        error
+        );
 
     });
 
 }
 
 
-// BUSCAR PRODUCTOS
+// BUSCAR PRODUCTO
 function buscarProducto() {
 
     const filtro = document
+
     .getElementById("buscarProducto")
+
     .value
+
     .toLowerCase();
 
+
     document
+
     .querySelectorAll("#tablaProductos tr")
+
     .forEach(fila => {
 
         fila.style.display =
-        fila.textContent.toLowerCase().includes(filtro)
+
+        fila.textContent
+        .toLowerCase()
+        .includes(filtro)
+
         ? ""
+
         : "none";
 
     });
