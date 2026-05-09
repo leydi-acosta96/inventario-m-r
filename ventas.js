@@ -1,157 +1,404 @@
-const API_USUARIOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/usuarios";
-const usuario = JSON.parse(sessionStorage.getItem("usuario"));
+// ventas.js
 
-const API_PRODUCTOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/productos";
-const API_VENTAS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/ventas";
+const API_USUARIOS =
+"https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/usuarios";
+
+const API_PRODUCTOS =
+"https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/productos";
+
+const API_VENTAS =
+"https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/ventas";
+
+
+const usuario =
+JSON.parse(sessionStorage.getItem("usuario"));
+
+
+// VALIDAR SESIÓN
+if (!usuario) {
+
+    window.location.href = "index.html";
+
+}
+
+
+// VALIDAR ROL
+const rol = usuario.rol.toLowerCase();
+
+if (
+    rol !== "admin" &&
+    rol !== "vendedora" &&
+    rol !== "emprendedora"
+) {
+
+    alert("No tienes acceso");
+
+    window.location.href = "index.html";
+
+}
+
 
 let carrito = [];
 let productos = [];
 
+
+// INICIO
 document.addEventListener("DOMContentLoaded", () => {
+
     cargarProductos();
+
 });
+
+
+// EVENTOS
+document.getElementById("emprendimientoVenta")
+.addEventListener("change", cargarSelectProductos);
+
+
+document.getElementById("buscarProductoVenta")
+.addEventListener("keyup", filtrarProductos);
 
 
 // CARGAR PRODUCTOS
-function cargarProductos(){
+function cargarProductos() {
 
-fetch(API_PRODUCTOS)
-.then(res => res.json())
-.then(data => {
+    fetch(API_PRODUCTOS)
 
-productos = data.productos;
+    .then(res => res.json())
 
-cargarEmprendimientos();
-cargarSelectProductos();
+    .then(data => {
 
-});
+        productos = data.productos;
+
+        cargarEmprendimientos();
+
+        cargarSelectProductos();
+
+    })
+
+    .catch(error => {
+
+        console.error(
+        "Error cargando productos:",
+        error
+        );
+
+    });
 
 }
 
 
 // CARGAR EMPRENDIMIENTOS
-function cargarEmprendimientos(){
+function cargarEmprendimientos() {
 
-fetch(API_USUARIOS)
-.then(res => res.json())
-.then(data => {
+    const select =
+    document.getElementById("emprendimientoVenta");
 
-const select = document.getElementById("emprendimientoVenta");
 
-select.innerHTML = `<option value="">Seleccionar</option>`;
+    // EMPRENDEDORA
+    if (rol === "emprendedora") {
 
-data.usuarios.forEach(u => {
+        select.innerHTML = `
+            <option value="${usuario.emprendimiento}">
+                ${usuario.emprendimiento}
+            </option>
+        `;
 
-if(u.rol === "emprendedora"){
+        select.value =
+        usuario.emprendimiento;
 
-select.innerHTML += `
-<option value="${u.emprendimiento}">
-${u.emprendimiento}
-</option>
-`;
+        // BLOQUEAR
+        select.style.pointerEvents = "none";
+
+        select.style.background = "#f5f5f5";
+
+        cargarSelectProductos();
+
+        return;
+
+    }
+
+
+    // ADMIN Y VENDEDORA
+    fetch(API_USUARIOS)
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        select.innerHTML =
+        `<option value="">Seleccionar</option>`;
+
+        data.usuarios.forEach(u => {
+
+            if (
+                u.rol &&
+                u.rol.toLowerCase() === "emprendedora"
+            ) {
+
+                select.innerHTML += `
+
+                    <option value="${u.emprendimiento}">
+
+                        ${u.emprendimiento}
+
+                    </option>
+
+                `;
+
+            }
+
+        });
+
+    })
+
+    .catch(error => {
+
+        console.error(
+        "Error cargando emprendimientos:",
+        error
+        );
+
+    });
 
 }
-
-});
-
-});
-
-}
-
-// CAMBIO EMPRENDIMIENTO
-document.getElementById("emprendimientoVenta")
-.addEventListener("change", cargarSelectProductos);
 
 
 // CARGAR PRODUCTOS SEGÚN EMPRENDIMIENTO
-function cargarSelectProductos(){
+function cargarSelectProductos() {
 
-const emprendimiento = 
-document.getElementById("emprendimientoVenta").value;
+    const emprendimiento =
 
-const select = document.getElementById("productoVenta");
-select.innerHTML = `<option value="">Seleccionar producto</option>`;
+    document.getElementById("emprendimientoVenta")
+    .value;
 
-productos.forEach(p => {
 
-if(!emprendimiento || p.emprendimiento === emprendimiento){
+    const select =
+    document.getElementById("productoVenta");
 
-select.innerHTML += `
-<option value="${p.id}">
-${p.nombreProducto} - $${p.precioProducto}
-</option>
-`;
+
+    select.innerHTML =
+    `<option value="">Seleccionar producto</option>`;
+
+
+    productos.forEach(p => {
+
+        // IMPORTANTE:
+        // LA COLUMNA ES:
+        // emprendedora
+
+        if (
+
+            !emprendimiento ||
+
+            p.emprendedora === emprendimiento
+
+        ) {
+
+            select.innerHTML += `
+
+                <option value="${p.id}">
+
+                    ${p.nombreProducto}
+                    -
+                    $${p.precioProducto}
+
+                </option>
+
+            `;
+
+        }
+
+    });
 
 }
 
-});
+
+// FILTRAR PRODUCTOS
+function filtrarProductos() {
+
+    const texto =
+    document.getElementById("buscarProductoVenta")
+    .value
+    .toLowerCase();
+
+
+    const emprendimiento =
+    document.getElementById("emprendimientoVenta")
+    .value;
+
+
+    const select =
+    document.getElementById("productoVenta");
+
+
+    select.innerHTML =
+    `<option value="">Seleccionar producto</option>`;
+
+
+    productos.forEach(p => {
+
+        if (
+
+            (!emprendimiento ||
+
+            p.emprendedora === emprendimiento)
+
+            &&
+
+            p.nombreProducto
+            .toLowerCase()
+            .includes(texto)
+
+        ) {
+
+            select.innerHTML += `
+
+                <option value="${p.id}">
+
+                    ${p.nombreProducto}
+                    -
+                    $${p.precioProducto}
+
+                </option>
+
+            `;
+
+        }
+
+    });
 
 }
 
 
 // AGREGAR PRODUCTO
-function agregarProducto(){
+function agregarProducto() {
 
-const id = document.getElementById("productoVenta").value;
-const cantidad = Number(document.getElementById("cantidadVenta").value);
+    const id =
+    document.getElementById("productoVenta").value;
 
-if(!id || !cantidad) return;
+    const cantidad =
+    Number(
+        document.getElementById("cantidadVenta")
+        .value
+    );
 
-const producto = productos.find(p => p.id == id);
 
-const total = cantidad * Number(producto.precioProducto);
+    if (!id || !cantidad) {
 
-carrito.push({
-id: producto.id,
-codigo: producto.codigoProducto,
-nombre: producto.nombreProducto,
-emprendimiento: producto.emprendimiento,
-cantidad,
-precio: producto.precioProducto,
-total
-});
+        alert("Seleccione producto y cantidad");
 
-renderCarrito();
+        return;
+
+    }
+
+
+    const producto =
+    productos.find(p => p.id == id);
+
+
+    // VALIDAR STOCK
+    if (cantidad > Number(producto.stock)) {
+
+        alert("Stock insuficiente");
+
+        return;
+
+    }
+
+
+    const total =
+    cantidad * Number(producto.precioProducto);
+
+
+    carrito.push({
+
+        id: producto.id,
+
+        codigo: producto.codigoProducto,
+
+        nombre: producto.nombreProducto,
+
+        emprendimiento:
+        producto.emprendedora,
+
+        cantidad,
+
+        precio:
+        producto.precioProducto,
+
+        total
+
+    });
+
+
+    renderCarrito();
 
 }
 
 
 // RENDER CARRITO
-function renderCarrito(){
+function renderCarrito() {
 
-const tabla = document.getElementById("detalleVenta");
-tabla.innerHTML = "";
+    const tabla =
+    document.getElementById("detalleVenta");
 
-let totalVenta = 0;
 
-carrito.forEach((item,index)=>{
+    tabla.innerHTML = "";
 
-totalVenta += item.total;
 
-tabla.innerHTML += `
-<tr>
-<td>${item.emprendimiento}</td>
-<td>${item.nombre}</td>
-<td>${item.cantidad}</td>
-<td>$${item.precio}</td>
-<td>$${item.total}</td>
-<td>
-<button onclick="eliminarItem(${index})">X</button>
-</td>
-</tr>
-`;
+    let totalVenta = 0;
 
-});
 
-document.getElementById("totalVenta").textContent = totalVenta;
+    carrito.forEach((item,index) => {
+
+        totalVenta += item.total;
+
+        tabla.innerHTML += `
+
+            <tr>
+
+                <td>${item.emprendimiento}</td>
+
+                <td>${item.nombre}</td>
+
+                <td>${item.cantidad}</td>
+
+                <td>$${item.precio}</td>
+
+                <td>$${item.total}</td>
+
+                <td>
+
+                    <button
+                    onclick="eliminarItem(${index})">
+
+                    X
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    });
+
+
+    document.getElementById("totalVenta")
+    .textContent = totalVenta;
 
 }
 
 
 // ELIMINAR ITEM
-function eliminarItem(index){
-carrito.splice(index,1);
-renderCarrito();
+function eliminarItem(index) {
+
+    carrito.splice(index,1);
+
+    renderCarrito();
+
 }
 
 
@@ -159,59 +406,145 @@ renderCarrito();
 document.getElementById("btnRegistrarVenta")
 .addEventListener("click", async () => {
 
-const canalVenta = document.getElementById("medioVenta").value;
+    if (carrito.length === 0) {
 
-for(const item of carrito){
+        alert("Agregue productos");
 
-// GUARDAR VENTA
-await fetch(API_VENTAS,{
-method:"POST",
-headers:{ "Content-Type":"application/json"},
-body:JSON.stringify({
-venta:{
-productoId:item.id,
-codigoProducto:item.codigo,
-cantidad:item.cantidad,
-canalVenta:canalVenta,
-fechaVenta:new Date().toISOString().split("T")[0],
-emprendedora:usuario.nombre,
-total:item.total
-}
-})
+        return;
+
+    }
+
+
+    const canalVenta =
+    document.getElementById("medioVenta").value;
+
+
+    for (const item of carrito) {
+
+        // GUARDAR VENTA
+        await fetch(API_VENTAS, {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body: JSON.stringify({
+
+                venta: {
+
+                    productoId: item.id,
+
+                    codigoProducto:
+                    item.codigo,
+
+                    nombreProducto:
+                    item.nombre,
+
+                    emprendimiento:
+                    item.emprendimiento,
+
+                    cantidad:
+                    item.cantidad,
+
+                    canalVenta:
+                    canalVenta,
+
+                    fechaVenta:
+                    new Date()
+                    .toISOString()
+                    .split("T")[0],
+
+                    vendedor:
+                    usuario.nombre,
+
+                    total:
+                    item.total
+
+                }
+
+            })
+
+        });
+
+
+        // ACTUALIZAR STOCK
+        const producto =
+        productos.find(p => p.id == item.id);
+
+
+        const nuevoStock =
+
+        Number(producto.stock)
+
+        -
+
+        item.cantidad;
+
+
+        await fetch(`${API_PRODUCTOS}/${producto.id}`, {
+
+            method:"PUT",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body: JSON.stringify({
+
+                producto: {
+
+                    stock: nuevoStock
+
+                }
+
+            })
+
+        });
+
+
+        // ALERTA STOCK
+        if (nuevoStock <= 5) {
+
+            alert(
+            "Stock bajo de "
+            +
+            producto.nombreProducto
+            );
+
+        }
+
+    }
+
+
+    alert("Venta registrada correctamente");
+
+
+    carrito = [];
+
+
+    renderCarrito();
+
+
+    cargarProductos();
+
 });
 
-// DESCONTAR STOCK
-const producto = productos.find(p => p.id == item.id);
-const nuevoStock = Number(producto.stock) - item.cantidad;
 
-await fetch(`${API_PRODUCTOS}/${producto.id}`,{
-method:"PUT",
-headers:{ "Content-Type":"application/json"},
-body:JSON.stringify({
-producto:{
-stock:nuevoStock
-}
-})
-});
+// VOLVER
+function volverPagina() {
 
-if(nuevoStock <= 5){
-alert("Stock bajo de " + producto.nombreProducto);
-}
-
-}
-
-alert("Venta registrada correctamente");
-
-carrito = [];
-renderCarrito();
-
-});
-
-function volverPagina(){
     window.history.back();
+
 }
 
-function logout(){
+
+// LOGOUT
+function logout() {
+
     sessionStorage.clear();
+
     window.location.href = "index.html";
+
 }
