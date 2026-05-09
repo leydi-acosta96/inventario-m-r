@@ -1,5 +1,3 @@
-// ventas.js
-
 const API_USUARIOS =
 "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/usuarios";
 
@@ -10,6 +8,7 @@ const API_VENTAS =
 "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/ventas";
 
 
+// USUARIO ACTIVO
 const usuario =
 JSON.parse(sessionStorage.getItem("usuario"));
 
@@ -26,9 +25,13 @@ if (!usuario) {
 const rol = usuario.rol.toLowerCase();
 
 if (
+
     rol !== "admin" &&
+
     rol !== "vendedora" &&
+
     rol !== "emprendedora"
+
 ) {
 
     alert("No tienes acceso");
@@ -38,7 +41,9 @@ if (
 }
 
 
+// VARIABLES
 let carrito = [];
+
 let productos = [];
 
 
@@ -57,6 +62,10 @@ document.getElementById("emprendimientoVenta")
 
 document.getElementById("buscarProductoVenta")
 .addEventListener("keyup", filtrarProductos);
+
+
+document.getElementById("btnRegistrarVenta")
+.addEventListener("click", registrarVenta);
 
 
 // CARGAR PRODUCTOS
@@ -99,9 +108,13 @@ function cargarEmprendimientos() {
     if (rol === "emprendedora") {
 
         select.innerHTML = `
+
             <option value="${usuario.emprendimiento}">
+
                 ${usuario.emprendimiento}
+
             </option>
+
         `;
 
         select.value =
@@ -132,8 +145,11 @@ function cargarEmprendimientos() {
         data.usuarios.forEach(u => {
 
             if (
+
                 u.rol &&
+
                 u.rol.toLowerCase() === "emprendedora"
+
             ) {
 
                 select.innerHTML += `
@@ -184,7 +200,7 @@ function cargarSelectProductos() {
     productos.forEach(p => {
 
         // IMPORTANTE:
-        // LA COLUMNA ES:
+        // LA COLUMNA PRODUCTOS ES:
         // emprendedora
 
         if (
@@ -218,12 +234,14 @@ function cargarSelectProductos() {
 function filtrarProductos() {
 
     const texto =
+
     document.getElementById("buscarProductoVenta")
     .value
     .toLowerCase();
 
 
     const emprendimiento =
+
     document.getElementById("emprendimientoVenta")
     .value;
 
@@ -277,13 +295,16 @@ function agregarProducto() {
     const id =
     document.getElementById("productoVenta").value;
 
+
     const cantidad =
+
     Number(
         document.getElementById("cantidadVenta")
         .value
     );
 
 
+    // VALIDAR
     if (!id || !cantidad) {
 
         alert("Seleccione producto y cantidad");
@@ -307,17 +328,21 @@ function agregarProducto() {
     }
 
 
+    // CALCULAR TOTAL
     const total =
     cantidad * Number(producto.precioProducto);
 
 
+    // AGREGAR AL CARRITO
     carrito.push({
 
         id: producto.id,
 
-        codigo: producto.codigoProducto,
+        codigo:
+        producto.codigoProducto,
 
-        nombre: producto.nombreProducto,
+        nombre:
+        producto.nombreProducto,
 
         emprendimiento:
         producto.emprendedora,
@@ -325,13 +350,14 @@ function agregarProducto() {
         cantidad,
 
         precio:
-        producto.precioProducto,
+        Number(producto.precioProducto),
 
         total
 
     });
 
 
+    // RENDER
     renderCarrito();
 
 }
@@ -403,9 +429,9 @@ function eliminarItem(index) {
 
 
 // REGISTRAR VENTA
-document.getElementById("btnRegistrarVenta")
-.addEventListener("click", async () => {
+async function registrarVenta() {
 
+    // VALIDAR CARRITO
     if (carrito.length === 0) {
 
         alert("Agregue productos");
@@ -419,117 +445,151 @@ document.getElementById("btnRegistrarVenta")
     document.getElementById("medioVenta").value;
 
 
-    for (const item of carrito) {
+    try {
 
-        // GUARDAR VENTA
-        await fetch(API_VENTAS, {
+        for (const item of carrito) {
 
-            method:"POST",
+            // GUARDAR VENTA
+            await fetch(API_VENTAS, {
 
-            headers:{
-                "Content-Type":"application/json"
-            },
+                method:"POST",
 
-            body: JSON.stringify({
+                headers:{
+                    "Content-Type":"application/json"
+                },
 
-                venta: {
+                body: JSON.stringify({
 
-                    productoId: item.id,
+                    venta: {
 
-                    codigoProducto:
-                    item.codigo,
+                        productoId:
+                        item.id,
 
-                    nombreProducto:
-                    item.nombre,
+                        codigoProducto:
+                        item.codigo,
 
-                    emprendimiento:
-                    item.emprendimiento,
+                        nombreProducto:
+                        item.nombre,
 
-                    cantidad:
-                    item.cantidad,
+                        emprendimiento:
+                        item.emprendimiento,
 
-                    canalVenta:
-                    canalVenta,
+                        cantidad:
+                        item.cantidad,
 
-                    fechaVenta:
-                    new Date()
-                    .toISOString()
-                    .split("T")[0],
+                        canalVenta:
+                        canalVenta,
 
-                    vendedor:
-                    usuario.nombre,
+                        fechaVenta:
+                        new Date()
+                        .toISOString()
+                        .split("T")[0],
 
-                    total:
-                    item.total
+                        horaVenta:
+                        new Date()
+                        .toLocaleTimeString(),
 
-                }
+                        vendedorNombre:
+                        usuario.nombre,
 
-            })
+                        vendedorRol:
+                        usuario.rol,
 
-        });
+                        vendedorCodigo:
+                        usuario.codigoAcceso || "",
 
+                        total:
+                        item.total
 
-        // ACTUALIZAR STOCK
-        const producto =
-        productos.find(p => p.id == item.id);
+                    }
 
+                })
 
-        const nuevoStock =
-
-        Number(producto.stock)
-
-        -
-
-        item.cantidad;
-
-
-        await fetch(`${API_PRODUCTOS}/${producto.id}`, {
-
-            method:"PUT",
-
-            headers:{
-                "Content-Type":"application/json"
-            },
-
-            body: JSON.stringify({
-
-                producto: {
-
-                    stock: nuevoStock
-
-                }
-
-            })
-
-        });
+            });
 
 
-        // ALERTA STOCK
-        if (nuevoStock <= 5) {
+            // BUSCAR PRODUCTO
+            const producto =
+            productos.find(p => p.id == item.id);
 
-            alert(
-            "Stock bajo de "
-            +
-            producto.nombreProducto
-            );
+
+            // NUEVO STOCK
+            const nuevoStock =
+
+            Number(producto.stock)
+
+            -
+
+            item.cantidad;
+
+
+            // ACTUALIZAR STOCK
+            await fetch(`${API_PRODUCTOS}/${producto.id}`, {
+
+                method:"PUT",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body: JSON.stringify({
+
+                    producto: {
+
+                        stock: nuevoStock
+
+                    }
+
+                })
+
+            });
+
+
+            // ALERTA STOCK
+            if (nuevoStock <= 5) {
+
+                alert(
+                "Stock bajo de "
+                +
+                producto.nombreProducto
+                );
+
+            }
 
         }
 
+
+        // MENSAJE
+        alert("Venta registrada correctamente");
+
+
+        // LIMPIAR
+        carrito = [];
+
+
+        renderCarrito();
+
+
+        document.getElementById("cantidadVenta")
+        .value = "";
+
+
+        cargarProductos();
+
     }
 
+    catch(error) {
 
-    alert("Venta registrada correctamente");
+        console.error(
+        "Error registrando venta:",
+        error
+        );
 
+        alert("Error al registrar venta");
 
-    carrito = [];
+    }
 
-
-    renderCarrito();
-
-
-    cargarProductos();
-
-});
+}
 
 
 // VOLVER
