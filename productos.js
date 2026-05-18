@@ -1,5 +1,5 @@
-const API_PRODUCTOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/productos";
-const API_USUARIOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/usuarios";
+const API_PRODUCTOS = "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/productos";
+const API_USUARIOS = "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/usuarioss";
 
 const usuario = JSON.parse(sessionStorage.getItem("usuario"));
 
