@@ -1,4 +1,4 @@
-const API_URL = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/usuarios";
+const API_URL = "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/usuarios";
 
 document.addEventListener("DOMContentLoaded", cargarUsuarios);
 
