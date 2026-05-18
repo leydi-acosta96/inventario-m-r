@@ -499,29 +499,4 @@ background:#ddb1c3;
 .card:hover{
     transform:translateY(-5px);
 }
-/* ===========================
-   CONFIGURACIÓN RESPONSIVE GLOBAL
-=========================== */
 
-* {
-  box-sizing: border-box;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-button {
-  max-width: 100%;
-}
-
-input, select, textarea {
-  width: 100%;
-  max-width: 100%;
-}
-
-/* Contenedores principales */
-main, .container, .dashboard-container {
-  width: 100%;
-}
