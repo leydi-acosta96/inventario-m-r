@@ -6,7 +6,7 @@ if(!usuario){
 }
 
 // API PRODUCTOS
-const API_PRODUCTOS = "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/productos";
+const API_PRODUCTOS = "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/productos";
 
 document.addEventListener("DOMContentLoaded", () => {
     //MOSTRAR NOMBRE DEL EMPRENDIMIENTO
