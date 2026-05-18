@@ -1,5 +1,5 @@
 const API = {
-  usuarios: "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/usuarios",
-  productos: "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/productos",
-  ventas: "https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/ventas"
+  usuarios: "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/usuarios",
+  productos: "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/productos",
+  ventas: "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/ventas"
 };
