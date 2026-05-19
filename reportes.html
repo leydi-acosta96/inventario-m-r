@@ -1,73 +1,227 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
 <title>Reportes</title>
+
 <link rel="stylesheet" href="styles.css">
+
+<script
+src="https://cdn.jsdelivr.net/npm/chart.js">
+</script>
+
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+</script>
+
 </head>
 
 <body>
 
-<h1>Reportes del Sistema</h1>
+<div class="acciones-superior">
 
-<div>
+<button onclick="volverPagina()"
+class="btn-top volver">
 
-<label>Fecha inicio</label>
-<input type="date" id="fechaInicio">
+← Volver
 
-<label>Fecha fin</label>
-<input type="date" id="fechaFin">
+</button>
 
-<label>Emprendedora</label>
-<select id="filtroEmprendedora"></select>
+<button onclick="logout()"
+class="btn-top cerrar">
 
-<button onclick="generarReporte()">Generar</button>
+Cerrar sesión
+
+</button>
 
 </div>
+
+
+<h1>Reportes del Sistema</h1>
+
+
+<div class="filtros">
+
+<label>Fecha inicio</label>
+
+<input
+type="date"
+id="fechaInicio">
+
+
+<label>Fecha fin</label>
+
+<input
+type="date"
+id="fechaFin">
+
+
+<label>Emprendedora</label>
+
+<select id="filtroEmprendedora">
+
+<option value="">
+Todas
+</option>
+
+</select>
+
+
+<label>Vendedora</label>
+
+<select id="filtroVendedora">
+
+<option value="">
+Todas
+</option>
+
+</select>
+
+
+<button onclick="generarReporte()">
+
+Generar Reporte
+
+</button>
+
+
+<button onclick="generarPDF()">
+
+Exportar PDF
+
+</button>
+
+</div>
+
 
 <h2>Resumen</h2>
 
 <div class="cards">
 
 <div class="card">
+
 <h3>Total Ventas</h3>
-<p id="totalVentas">0</p>
+
+<p id="totalVentas">
+
+0
+
+</p>
+
 </div>
 
+
 <div class="card">
+
 <h3>Productos Vendidos</h3>
-<p id="productosVendidos">0</p>
+
+<p id="productosVendidos">
+
+0
+
+</p>
+
 </div>
+
 
 <div class="card">
+
 <h3>Inventario Actual</h3>
-<p id="inventarioActual">0</p>
+
+<p id="inventarioActual">
+
+0
+
+</p>
+
 </div>
 
 </div>
+
+
+<h2>Ventas</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Fecha</th>
+
+<th>Producto</th>
+
+<th>Emprendimiento</th>
+
+<th>Vendedora</th>
+
+<th>Cantidad</th>
+
+<th>Total</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tablaVentas">
+
+</tbody>
+
+</table>
+
 
 <h2>Inventario</h2>
 
 <table>
+
 <thead>
+
 <tr>
+
 <th>Producto</th>
+
+<th>Emprendimiento</th>
+
 <th>Stock</th>
+
 <th>Estado</th>
+
 </tr>
+
 </thead>
 
-<tbody id="tablaInventario"></tbody>
+<tbody id="tablaInventario">
+
+</tbody>
 
 </table>
 
+
+<h2>Ventas por Emprendimiento</h2>
+
+<canvas
+id="graficoVentas">
+
+</canvas>
+
+
 <script src="auth.js"></script>
+
 <script>
-validarRol(["admin","emprendedora"]);
+
+validarRol(["admin"]);
+
 </script>
 
 <script src="reportes.js"></script>
 
 </body>
+
 </html>
