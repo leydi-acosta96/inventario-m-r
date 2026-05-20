@@ -51,6 +51,10 @@ function irInventario(){
     window.location.href = "productos.html";
 }
 
+function irReportes(){
+    window.location.href = "reportes.html";
+}
+
 
 // LOGOUT
 function logout(){
