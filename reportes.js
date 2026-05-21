@@ -5,7 +5,7 @@ const API_PRODUCTOS =
 "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/productos";
 
 const API_USUARIOS =
-"https://https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/usuarios";
+"https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/usuarios";
 
 
 let ventas=[];
