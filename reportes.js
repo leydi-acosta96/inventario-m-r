@@ -8,19 +8,19 @@ const API_USUARIOS =
 "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/usuarios";
 
 
-let ventas=[];
-let productos=[];
-
+let ventas = [];
+let productos = [];
 let grafico;
 
 
+// INICIO
 document.addEventListener(
 "DOMContentLoaded",
 async()=>{
 
 await cargarDatos();
 
-cargarFiltros();
+await cargarFiltros();
 
 generarReporte();
 
@@ -28,60 +28,89 @@ generarReporte();
 );
 
 
+// CARGAR DATOS
 async function cargarDatos(){
 
-const resVentas=
+try{
+
+const resVentas =
 await fetch(API_VENTAS);
 
-const dataVentas=
+const dataVentas =
 await resVentas.json();
 
-ventas=
-dataVentas.ventas||[];
+ventas =
+dataVentas.ventas || [];
 
 
-const resProductos=
+const resProductos =
 await fetch(API_PRODUCTOS);
 
-const dataProductos=
+const dataProductos =
 await resProductos.json();
 
-productos=
-dataProductos.productos||[];
+productos =
+dataProductos.productos || [];
+
+}
+catch(error){
+
+console.error(
+"Error cargando datos",
+error
+);
+
+}
 
 }
 
 
+// CARGAR FILTROS
 async function cargarFiltros(){
 
-const res=
+try{
+
+const res =
 await fetch(API_USUARIOS);
 
-const data=
+const data =
 await res.json();
 
-
-const filtroEmp=
+const filtroEmp =
 document.getElementById(
 "filtroEmprendedora"
 );
 
-const filtroVend=
+const filtroVend =
 document.getElementById(
 "filtroVendedora"
 );
 
+filtroEmp.innerHTML =
+`<option value="">Todas</option>`;
+
+filtroVend.innerHTML =
+`<option value="">Todas</option>`;
+
 
 data.usuarios.forEach(u=>{
 
+const rol =
+u.rol?.toLowerCase();
+
 if(
-u.rol?.toLowerCase()
-==="emprendedora"
+
+rol==="emprendedora"
+
+&&
+
+u.emprendimiento
+
 ){
 
-filtroEmp.innerHTML+=`
+filtroEmp.innerHTML += `
 
-<option>
+<option value="${u.emprendimiento}">
 
 ${u.emprendimiento}
 
@@ -93,13 +122,18 @@ ${u.emprendimiento}
 
 
 if(
-u.rol?.toLowerCase()
-==="vendedora"
+
+rol==="vendedora"
+
+&&
+
+u.nombre
+
 ){
 
-filtroVend.innerHTML+=`
+filtroVend.innerHTML += `
 
-<option>
+<option value="${u.nombre}">
 
 ${u.nombre}
 
@@ -112,28 +146,43 @@ ${u.nombre}
 });
 
 }
+catch(error){
+
+console.error(
+"Error filtros",
+error
+);
+
+}
+
+}
 
 
+// GENERAR REPORTE
 function generarReporte(){
 
-const inicio=
+const inicio =
 document
-.getElementById("fechaInicio")
+.getElementById(
+"fechaInicio"
+)
 .value;
 
-const fin=
+const fin =
 document
-.getElementById("fechaFin")
+.getElementById(
+"fechaFin"
+)
 .value;
 
-const emp=
+const emp =
 document
 .getElementById(
 "filtroEmprendedora"
 )
 .value;
 
-const vend=
+const vend =
 document
 .getElementById(
 "filtroVendedora"
@@ -141,95 +190,170 @@ document
 .value;
 
 
-let ventasFiltradas=
+// FILTRAR VENTAS
+let ventasFiltradas =
 ventas.filter(v=>{
 
-const fecha=
-v.fechaVenta||"";
+const fecha =
+v.fechaVenta || "";
+
+// COMPATIBILIDAD
+const empVenta =
+
+v.emprendimiento
+
+||
+
+v.emprendedora
+
+||
+
+"";
 
 return(
 
-(!inicio||fecha>=inicio)
+(!inicio || fecha >= inicio)
 
 &&
 
-(!fin||fecha<=fin)
+(!fin || fecha <= fin)
 
 &&
 
-(!emp||
-
-v.emprendimiento===emp)
+(!emp || empVenta === emp)
 
 &&
 
-(!vend||
+(
 
-v.vendedorNombre===vend)
+!vend
+
+||
+
+v.vendedorNombre===vend
+
+)
 
 );
 
 });
 
 
+// TOTAL VENTAS
+const totalVentas =
+
+ventasFiltradas.reduce(
+
+(a,b)=>
+
+a+
+
+Number(
+b.total || 0
+),
+
+0
+
+);
+
+
+// PRODUCTOS VENDIDOS
+const vendidos =
+
+ventasFiltradas.reduce(
+
+(a,b)=>
+
+a+
+
+Number(
+b.cantidad || 0
+),
+
+0
+
+);
+
+
+// INVENTARIO FILTRADO
+const inventario =
+
+productos.filter(p=>{
+
+if(!emp){
+
+return true;
+
+}
+
+return (
+
+p.emprendedora===emp
+
+||
+
+p.emprendimiento===emp
+
+);
+
+});
+
+const stockTotal =
+
+inventario.reduce(
+
+(a,b)=>
+
+a+
+
+Number(
+b.stock || 0
+),
+
+0
+
+);
+
+
+// CARDS
 document
 .getElementById(
 "totalVentas"
 )
-.textContent=
+.textContent =
 
-ventasFiltradas
-.reduce(
-(a,b)=>
-
-a+
-Number(b.total),
-
-0
-)
-.toFixed(2);
+totalVentas.toFixed(2);
 
 
 document
 .getElementById(
 "productosVendidos"
 )
-.textContent=
+.textContent =
 
-ventasFiltradas
-.reduce(
-(a,b)=>
-
-a+
-Number(b.cantidad),
-
-0
-);
+vendidos;
 
 
 document
 .getElementById(
 "inventarioActual"
 )
-.textContent=
+.textContent =
 
-productos
-.reduce(
-(a,b)=>
-
-a+
-Number(b.stock),
-
-0
-);
+stockTotal;
 
 
+// TABLAS
 renderTablaVentas(
 ventasFiltradas
 );
 
-renderInventario();
+renderInventario(
+inventario
+);
 
+
+// GRÁFICO
 crearGrafico(
 ventasFiltradas
 );
@@ -237,9 +361,10 @@ ventasFiltradas
 }
 
 
+// TABLA VENTAS
 function renderTablaVentas(datos){
 
-const tabla=
+const tabla =
 document
 .getElementById(
 "tablaVentas"
@@ -250,43 +375,56 @@ tabla.innerHTML="";
 
 datos.forEach(v=>{
 
-tabla.innerHTML+=`
+const emp =
+
+v.emprendimiento
+
+||
+
+v.emprendedora
+
+||
+
+"-";
+
+
+tabla.innerHTML +=`
 
 <tr>
 
 <td>
 
-${v.fechaVenta}
+${v.fechaVenta||""}
 
 </td>
 
 <td>
 
-${v.nombreProducto}
+${v.nombreProducto||""}
 
 </td>
 
 <td>
 
-${v.emprendimiento}
+${emp}
 
 </td>
 
 <td>
 
-${v.vendedorNombre}
+${v.vendedorNombre||""}
 
 </td>
 
 <td>
 
-${v.cantidad}
+${v.cantidad||0}
 
 </td>
 
 <td>
 
-$${v.total}
+$${v.total||0}
 
 </td>
 
@@ -299,9 +437,10 @@ $${v.total}
 }
 
 
-function renderInventario(){
+// INVENTARIO
+function renderInventario(datos){
 
-const tabla=
+const tabla =
 document
 .getElementById(
 "tablaInventario"
@@ -310,9 +449,9 @@ document
 tabla.innerHTML="";
 
 
-productos.forEach(p=>{
+datos.forEach(p=>{
 
-tabla.innerHTML+=`
+tabla.innerHTML +=`
 
 <tr>
 
@@ -324,7 +463,19 @@ ${p.nombreProducto}
 
 <td>
 
-${p.emprendedora}
+${
+
+p.emprendedora
+
+||
+
+p.emprendimiento
+
+||
+
+""
+
+}
 
 </td>
 
@@ -349,15 +500,25 @@ ${p.estadoProducto}
 }
 
 
+// GRAFICO
 function crearGrafico(ventas){
 
 const resumen={};
 
-
 ventas.forEach(v=>{
 
 const emp=
-v.emprendimiento;
+
+v.emprendimiento
+
+||
+
+v.emprendedora
+
+||
+
+"Sin nombre";
+
 
 resumen[emp]=
 
@@ -365,7 +526,9 @@ resumen[emp]=
 
 +
 
-Number(v.total);
+Number(
+v.total||0
+);
 
 });
 
@@ -377,11 +540,11 @@ grafico.destroy();
 }
 
 
-grafico=
+grafico =
+
 new Chart(
 
-document
-.getElementById(
+document.getElementById(
 "graficoVentas"
 ),
 
@@ -392,7 +555,10 @@ type:"bar",
 data:{
 
 labels:
-Object.keys(resumen),
+
+Object.keys(
+resumen
+),
 
 datasets:[{
 
@@ -400,6 +566,7 @@ label:
 "Ventas",
 
 data:
+
 Object.values(
 resumen
 )
@@ -415,14 +582,19 @@ resumen
 }
 
 
+// PDF
 function generarPDF(){
 
-const{
+const {
+
 jsPDF
+
 }=window.jspdf;
 
-const pdf=
+
+const pdf =
 new jsPDF();
+
 
 pdf.setFontSize(16);
 
@@ -431,6 +603,9 @@ pdf.text(
 20,
 20
 );
+
+
+pdf.setFontSize(12);
 
 pdf.text(
 
@@ -450,6 +625,7 @@ document
 
 );
 
+
 pdf.text(
 
 "Productos vendidos: "
@@ -468,26 +644,45 @@ document
 
 );
 
+
+pdf.text(
+
+"Inventario actual: "
+
++
+
+document
+.getElementById(
+"inventarioActual"
+)
+.textContent,
+
+20,
+
+70
+
+);
+
+
 pdf.save(
-
 "Reporte.pdf"
-
 );
 
 }
 
 
+// LOGOUT
 function logout(){
 
 sessionStorage.clear();
 
 window.location.href=
-
 "index.html";
 
 }
 
 
+// VOLVER
 function volverPagina(){
 
 window.history.back();
