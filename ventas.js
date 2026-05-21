@@ -10,601 +10,829 @@ const API_VENTAS =
 
 // USUARIO ACTIVO
 const usuario =
-JSON.parse(sessionStorage.getItem("usuario"));
+JSON.parse(
+sessionStorage.getItem("usuario")
+);
 
 
 // VALIDAR SESIÓN
-if (!usuario) {
+if(!usuario){
 
-    window.location.href = "index.html";
+window.location.href="index.html";
 
 }
 
 
 // VALIDAR ROL
-const rol = usuario.rol.toLowerCase();
+const rol =
+usuario.rol
+.toLowerCase();
 
-if (
+if(
 
-    rol !== "admin" &&
+rol !== "admin" &&
 
-    rol !== "vendedora" &&
+rol !== "vendedora" &&
 
-    rol !== "emprendedora"
+rol !== "emprendedora"
 
-) {
+){
 
-    alert("No tienes acceso");
+alert("No tienes acceso");
 
-    window.location.href = "index.html";
+window.location.href="index.html";
 
 }
 
 
 // VARIABLES
-let carrito = [];
+let carrito=[];
 
-let productos = [];
+let productos=[];
 
 
 // INICIO
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
 
-    cargarProductos();
+cargarProductos();
 
-});
+}
+);
 
 
 // EVENTOS
-document.getElementById("emprendimientoVenta")
-.addEventListener("change", cargarSelectProductos);
+document
+.getElementById(
+"emprendimientoVenta"
+)
+.addEventListener(
+"change",
+cargarSelectProductos
+);
 
 
-document.getElementById("buscarProductoVenta")
-.addEventListener("keyup", filtrarProductos);
+document
+.getElementById(
+"buscarProductoVenta"
+)
+.addEventListener(
+"keyup",
+filtrarProductos
+);
 
 
-document.getElementById("btnRegistrarVenta")
-.addEventListener("click", registrarVenta);
+document
+.getElementById(
+"btnRegistrarVenta"
+)
+.addEventListener(
+"click",
+registrarVenta
+);
 
 
 // CARGAR PRODUCTOS
-function cargarProductos() {
+function cargarProductos(){
 
-    fetch(API_PRODUCTOS)
+fetch(API_PRODUCTOS)
 
-    .then(res => res.json())
+.then(
+res=>res.json()
+)
 
-    .then(data => {
+.then(data=>{
 
-        productos = data.productos;
+productos =
+data.productos;
 
-        cargarEmprendimientos();
+cargarEmprendimientos();
 
-        cargarSelectProductos();
+cargarSelectProductos();
 
-    })
+})
 
-    .catch(error => {
+.catch(error=>{
 
-        console.error(
-        "Error cargando productos:",
-        error
-        );
+console.error(
+"Error productos",
+error
+);
 
-    });
-
-}
-
-
-// CARGAR EMPRENDIMIENTOS
-function cargarEmprendimientos() {
-
-    const select =
-    document.getElementById("emprendimientoVenta");
-
-
-    // EMPRENDEDORA
-    if (rol === "emprendedora") {
-
-        select.innerHTML = `
-
-            <option value="${usuario.emprendimiento}">
-
-                ${usuario.emprendimiento}
-
-            </option>
-
-        `;
-
-        select.value =
-        usuario.emprendimiento;
-
-        // BLOQUEAR
-        select.style.pointerEvents = "none";
-
-        select.style.background = "#f5f5f5";
-
-        cargarSelectProductos();
-
-        return;
-
-    }
-
-
-    // ADMIN Y VENDEDORA
-    fetch(API_USUARIOS)
-
-    .then(res => res.json())
-
-    .then(data => {
-
-        select.innerHTML =
-        `<option value="">Seleccionar</option>`;
-
-        data.usuarios.forEach(u => {
-
-            if (
-
-                u.rol &&
-
-                u.rol.toLowerCase() === "emprendedora"
-
-            ) {
-
-                select.innerHTML += `
-
-                    <option value="${u.emprendimiento}">
-
-                        ${u.emprendimiento}
-
-                    </option>
-
-                `;
-
-            }
-
-        });
-
-    })
-
-    .catch(error => {
-
-        console.error(
-        "Error cargando emprendimientos:",
-        error
-        );
-
-    });
+});
 
 }
 
 
-// CARGAR PRODUCTOS SEGÚN EMPRENDIMIENTO
-function cargarSelectProductos() {
+// EMPRENDIMIENTOS
+function cargarEmprendimientos(){
 
-    const emprendimiento =
-
-    document.getElementById("emprendimientoVenta")
-    .value;
-
-
-    const select =
-    document.getElementById("productoVenta");
+const select =
+document.getElementById(
+"emprendimientoVenta"
+);
 
 
-    select.innerHTML =
-    `<option value="">Seleccionar producto</option>`;
+// EMPRENDEDORA
+if(
+rol==="emprendedora"
+){
 
+select.innerHTML=`
 
-    productos.forEach(p => {
+<option
+value="${usuario.emprendimiento}"
+>
 
-        // IMPORTANTE:
-        // LA COLUMNA PRODUCTOS ES:
-        // emprendedora
+${usuario.emprendimiento}
 
-        if (
+</option>
 
-            !emprendimiento ||
+`;
 
-            p.emprendedora === emprendimiento
+select.value=
+usuario.emprendimiento;
 
-        ) {
+select.disabled=true;
 
-            select.innerHTML += `
+cargarSelectProductos();
 
-                <option value="${p.id}">
-
-                    ${p.nombreProducto}
-                    -
-                    $${p.precioProducto}
-
-                </option>
-
-            `;
-
-        }
-
-    });
+return;
 
 }
 
 
-// FILTRAR PRODUCTOS
-function filtrarProductos() {
+// ADMIN Y VENDEDORA
+fetch(API_USUARIOS)
 
-    const texto =
+.then(
+res=>res.json()
+)
 
-    document.getElementById("buscarProductoVenta")
-    .value
-    .toLowerCase();
+.then(data=>{
+
+select.innerHTML=`
+
+<option value="">
+
+Seleccionar
+
+</option>
+
+`;
+
+data.usuarios
+.forEach(u=>{
+
+if(
+
+u.rol &&
+
+u.rol
+.toLowerCase()
+==="emprendedora"
+
+){
+
+select.innerHTML+=`
+
+<option
+value="${u.emprendimiento}"
+>
+
+${u.emprendimiento}
+
+</option>
+
+`;
+
+}
+
+});
+
+});
+
+}
 
 
-    const emprendimiento =
+// PRODUCTOS POR EMPRENDIMIENTO
+function cargarSelectProductos(){
 
-    document.getElementById("emprendimientoVenta")
-    .value;
+const emprendimiento=
 
-
-    const select =
-    document.getElementById("productoVenta");
-
-
-    select.innerHTML =
-    `<option value="">Seleccionar producto</option>`;
+document
+.getElementById(
+"emprendimientoVenta"
+)
+.value;
 
 
-    productos.forEach(p => {
+const select=
 
-        if (
+document
+.getElementById(
+"productoVenta"
+);
 
-            (!emprendimiento ||
+select.innerHTML=`
 
-            p.emprendedora === emprendimiento)
+<option value="">
 
-            &&
+Seleccionar producto
 
-            p.nombreProducto
-            .toLowerCase()
-            .includes(texto)
+</option>
 
-        ) {
+`;
 
-            select.innerHTML += `
 
-                <option value="${p.id}">
+productos.forEach(p=>{
 
-                    ${p.nombreProducto}
-                    -
-                    $${p.precioProducto}
+if(
 
-                </option>
+!emprendimiento ||
 
-            `;
+p.emprendedora===emprendimiento
 
-        }
+){
 
-    });
+select.innerHTML+=`
+
+<option
+value="${p.id}"
+>
+
+${p.nombreProducto}
+
+-
+
+$${p.precioProducto}
+
+</option>
+
+`;
+
+}
+
+});
+
+}
+
+
+// BUSCADOR
+function filtrarProductos(){
+
+const texto=
+
+document
+.getElementById(
+"buscarProductoVenta"
+)
+.value
+.toLowerCase();
+
+
+const emprendimiento=
+
+document
+.getElementById(
+"emprendimientoVenta"
+)
+.value;
+
+
+const select=
+
+document
+.getElementById(
+"productoVenta"
+);
+
+
+select.innerHTML=`
+
+<option value="">
+
+Seleccionar producto
+
+</option>
+
+`;
+
+
+productos.forEach(p=>{
+
+if(
+
+(
+
+!emprendimiento ||
+
+p.emprendedora===
+emprendimiento
+
+)
+
+&&
+
+p.nombreProducto
+.toLowerCase()
+.includes(texto)
+
+){
+
+select.innerHTML+=`
+
+<option
+value="${p.id}"
+>
+
+${p.nombreProducto}
+
+-
+
+$${p.precioProducto}
+
+</option>
+
+`;
+
+}
+
+});
 
 }
 
 
 // AGREGAR PRODUCTO
-function agregarProducto() {
+function agregarProducto(){
 
-    const id =
-    document.getElementById("productoVenta").value;
+const id=
 
-
-    const cantidad =
-
-    Number(
-        document.getElementById("cantidadVenta")
-        .value
-    );
+document
+.getElementById(
+"productoVenta"
+)
+.value;
 
 
-    // VALIDAR
-    if (!id || !cantidad) {
+const cantidad=
 
-        alert("Seleccione producto y cantidad");
+Number(
 
-        return;
+document
+.getElementById(
+"cantidadVenta"
+)
+.value
 
-    }
-
-
-    const producto =
-    productos.find(p => p.id == id);
-
-
-    // VALIDAR STOCK
-    if (cantidad > Number(producto.stock)) {
-
-        alert("Stock insuficiente");
-
-        return;
-
-    }
+);
 
 
-    // CALCULAR TOTAL
-    const total =
-    cantidad * Number(producto.precioProducto);
+if(
 
+!id ||
 
-    // AGREGAR AL CARRITO
-    carrito.push({
+cantidad<=0
 
-        id: producto.id,
+){
 
-        codigo:
-        producto.codigoProducto,
+alert(
+"Seleccione producto y cantidad"
+);
 
-        nombre:
-        producto.nombreProducto,
-
-        emprendimiento:
-        producto.emprendedora,
-
-        cantidad,
-
-        precio:
-        Number(producto.precioProducto),
-
-        total
-
-    });
-
-
-    // RENDER
-    renderCarrito();
+return;
 
 }
 
 
-// RENDER CARRITO
-function renderCarrito() {
+const producto=
 
-    const tabla =
-    document.getElementById("detalleVenta");
-
-
-    tabla.innerHTML = "";
+productos.find(
+p=>p.id==id
+);
 
 
-    let totalVenta = 0;
+if(!producto){
 
+alert(
+"Producto inválido"
+);
 
-    carrito.forEach((item,index) => {
-
-        totalVenta += item.total;
-
-        tabla.innerHTML += `
-
-            <tr>
-
-                <td>${item.emprendimiento}</td>
-
-                <td>${item.nombre}</td>
-
-                <td>${item.cantidad}</td>
-
-                <td>$${item.precio}</td>
-
-                <td>$${item.total}</td>
-
-                <td>
-
-                    <button
-                    onclick="eliminarItem(${index})">
-
-                    X
-
-                    </button>
-
-                </td>
-
-            </tr>
-
-        `;
-
-    });
-
-
-    document.getElementById("totalVenta")
-    .textContent = totalVenta;
+return;
 
 }
 
 
-// ELIMINAR ITEM
-function eliminarItem(index) {
+if(
 
-    carrito.splice(index,1);
+cantidad>
 
-    renderCarrito();
+Number(
+producto.stock
+)
+
+){
+
+alert(
+"Stock insuficiente"
+);
+
+return;
+
+}
+
+
+const total=
+
+cantidad*
+
+Number(
+producto.precioProducto
+);
+
+
+carrito.push({
+
+id:
+producto.id,
+
+codigo:
+producto.codigoProducto,
+
+nombre:
+producto.nombreProducto,
+
+emprendimiento:
+producto.emprendedora,
+
+cantidad,
+
+precio:
+Number(
+producto.precioProducto
+),
+
+total
+
+});
+
+
+renderCarrito();
+
+document
+.getElementById(
+"cantidadVenta"
+)
+.value="";
+
+}
+
+
+// RENDER
+function renderCarrito(){
+
+const tabla=
+
+document
+.getElementById(
+"detalleVenta"
+);
+
+tabla.innerHTML="";
+
+
+let totalVenta=0;
+
+
+carrito.forEach(
+
+(item,index)=>{
+
+totalVenta+=
+item.total;
+
+tabla.innerHTML+=`
+
+<tr>
+
+<td>
+${item.emprendimiento}
+</td>
+
+<td>
+${item.nombre}
+</td>
+
+<td>
+${item.cantidad}
+</td>
+
+<td>
+
+$${item.precio}
+
+</td>
+
+<td>
+
+$${item.total}
+
+</td>
+
+<td>
+
+<button
+
+onclick=
+
+"eliminarItem(${index})"
+
+>
+
+X
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+);
+
+
+document
+.getElementById(
+"totalVenta"
+)
+.textContent=
+totalVenta;
+
+}
+
+
+// ELIMINAR
+function eliminarItem(index){
+
+carrito.splice(
+index,
+1
+);
+
+renderCarrito();
 
 }
 
 
 // REGISTRAR VENTA
-async function registrarVenta() {
+async function registrarVenta(){
 
-    // VALIDAR CARRITO
-    if (carrito.length === 0) {
+if(
+carrito.length===0
+){
 
-        alert("Agregue productos");
+alert(
+"Agregue productos"
+);
 
-        return;
+return;
 
-    }
+}
 
 
-    const canalVenta =
-    document.getElementById("medioVenta").value;
+const canalVenta=
 
+document
+.getElementById(
+"medioVenta"
+)
+.value;
 
-    try {
 
-        for (const item of carrito) {
+try{
 
-            // GUARDAR VENTA
-            await fetch(API_VENTAS, {
+for(
 
-                method:"POST",
+const item
 
-                headers:{
-                    "Content-Type":"application/json"
-                },
+of carrito
 
-                body: JSON.stringify({
+){
 
-                    venta: {
+await fetch(
 
-                        productoId:
-                        item.id,
+API_VENTAS,
 
-                        codigoProducto:
-                        item.codigo,
+{
 
-                        nombreProducto:
-                        item.nombre,
+method:"POST",
 
-                        emprendimiento:
-                        item.emprendimiento,
+headers:{
 
-                        cantidad:
-                        item.cantidad,
+"Content-Type":
 
-                        canalVenta:
-                        canalVenta,
+"application/json"
 
-                        fechaVenta:
-                        new Date()
-                        .toISOString()
-                        .split("T")[0],
+},
 
-                        horaVenta:
-                        new Date()
-                        .toLocaleTimeString(),
+body:
 
-                        vendedorNombre:
-                        usuario.nombre,
+JSON.stringify({
 
-                        vendedorRol:
-                        usuario.rol,
+venta:{
 
-                        vendedorCodigo:
-                        usuario.codigoAcceso || "",
+productoId:
+item.id,
 
-                        total:
-                        item.total
+codigoProducto:
+item.codigo,
 
-                    }
+nombreProducto:
+item.nombre,
 
-                })
+emprendimiento:
+item.emprendimiento,
 
-            });
+cantidad:
+item.cantidad,
 
+canalVenta:
+canalVenta,
 
-            // BUSCAR PRODUCTO
-            const producto =
-            productos.find(p => p.id == item.id);
+fechaVenta:
 
+new Date()
 
-            // NUEVO STOCK
-            const nuevoStock =
+.toISOString()
 
-            Number(producto.stock)
+.split("T")[0],
 
-            -
+horaVenta:
 
-            item.cantidad;
+new Date()
 
+.toLocaleTimeString(),
 
-            // ACTUALIZAR STOCK
-            await fetch(`${API_PRODUCTOS}/${producto.id}`, {
+usuarioRegistro:
 
-                method:"PUT",
+usuario.nombre
+|| "",
 
-                headers:{
-                    "Content-Type":"application/json"
-                },
+rolRegistro:
 
-                body: JSON.stringify({
+usuario.rol
+|| "",
 
-                    producto: {
+codigoRegistro:
 
-                        stock: nuevoStock
+usuario.codigoAcceso
+|| "",
 
-                    }
+usuarioCompleto:
 
-                })
+`${usuario.nombre}
 
-            });
+-
 
+${usuario.rol}`,
 
-            // ALERTA STOCK
-            if (nuevoStock <= 5) {
+total:
 
-                alert(
-                "Stock bajo de "
-                +
-                producto.nombreProducto
-                );
+item.total
 
-            }
+}
 
-        }
+})
 
+}
 
-        // MENSAJE
-        alert("Venta registrada correctamente");
+);
 
 
-        // LIMPIAR
-        carrito = [];
+const producto=
 
+productos.find(
 
-        renderCarrito();
+p=>p.id==item.id
 
+);
 
-        document.getElementById("cantidadVenta")
-        .value = "";
 
+const nuevoStock=
 
-        cargarProductos();
+Number(
+producto.stock
+)
 
-    }
+-
 
-    catch(error) {
+item.cantidad;
 
-        console.error(
-        "Error registrando venta:",
-        error
-        );
 
-        alert("Error al registrar venta");
+await fetch(
 
-    }
+`${API_PRODUCTOS}/${producto.id}`,
+
+{
+
+method:"PUT",
+
+headers:{
+
+"Content-Type":
+
+"application/json"
+
+},
+
+body:
+
+JSON.stringify({
+
+producto:{
+
+stock:
+
+nuevoStock
+
+}
+
+})
+
+}
+
+);
+
+
+if(
+
+nuevoStock<=5
+
+){
+
+alert(
+
+"Stock bajo de "
+
++
+
+producto.nombreProducto
+
+);
+
+}
+
+}
+
+
+alert(
+
+"Venta registrada correctamente"
+
+);
+
+
+carrito=[];
+
+renderCarrito();
+
+cargarProductos();
+
+}
+
+catch(error){
+
+console.error(
+error
+);
+
+alert(
+"Error registrando venta"
+);
+
+}
 
 }
 
 
 // VOLVER
-function volverPagina() {
+function volverPagina(){
 
-    window.history.back();
+window.history.back();
 
 }
 
 
 // LOGOUT
-function logout() {
+function logout(){
 
-    sessionStorage.clear();
+sessionStorage.clear();
 
-    window.location.href = "index.html";
+window.location.href=
+"index.html";
 
 }
