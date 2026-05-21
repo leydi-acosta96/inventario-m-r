@@ -1,838 +1,610 @@
 const API_USUARIOS =
-"https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/usuarios";
+"https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/usuarios";
 
 const API_PRODUCTOS =
-"https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/productos";
+"https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/productos";
 
 const API_VENTAS =
-"https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/ventas";
+"https://api.sheety.co/439db015c12617013288a2fb34648f06/bdFinal/ventas";
 
 
 // USUARIO ACTIVO
 const usuario =
-JSON.parse(
-sessionStorage.getItem("usuario")
-);
+JSON.parse(sessionStorage.getItem("usuario"));
 
 
 // VALIDAR SESIÓN
-if(!usuario){
+if (!usuario) {
 
-window.location.href="index.html";
+    window.location.href = "index.html";
 
 }
 
 
 // VALIDAR ROL
-const rol =
-usuario.rol
-.toLowerCase();
+const rol = usuario.rol.toLowerCase();
 
-if(
+if (
 
-rol !== "admin" &&
+    rol !== "admin" &&
 
-rol !== "vendedora" &&
+    rol !== "vendedora" &&
 
-rol !== "emprendedora"
+    rol !== "emprendedora"
 
-){
+) {
 
-alert("No tienes acceso");
+    alert("No tienes acceso");
 
-window.location.href="index.html";
+    window.location.href = "index.html";
 
 }
 
 
 // VARIABLES
-let carrito=[];
+let carrito = [];
 
-let productos=[];
+let productos = [];
 
 
 // INICIO
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
-cargarProductos();
+    cargarProductos();
 
-}
-);
+});
 
 
 // EVENTOS
-document
-.getElementById(
-"emprendimientoVenta"
-)
-.addEventListener(
-"change",
-cargarSelectProductos
-);
+document.getElementById("emprendimientoVenta")
+.addEventListener("change", cargarSelectProductos);
 
 
-document
-.getElementById(
-"buscarProductoVenta"
-)
-.addEventListener(
-"keyup",
-filtrarProductos
-);
+document.getElementById("buscarProductoVenta")
+.addEventListener("keyup", filtrarProductos);
 
 
-document
-.getElementById(
-"btnRegistrarVenta"
-)
-.addEventListener(
-"click",
-registrarVenta
-);
+document.getElementById("btnRegistrarVenta")
+.addEventListener("click", registrarVenta);
 
 
 // CARGAR PRODUCTOS
-function cargarProductos(){
+function cargarProductos() {
 
-fetch(API_PRODUCTOS)
+    fetch(API_PRODUCTOS)
 
-.then(
-res=>res.json()
-)
+    .then(res => res.json())
 
-.then(data=>{
+    .then(data => {
 
-productos =
-data.productos;
+        productos = data.productos;
 
-cargarEmprendimientos();
+        cargarEmprendimientos();
 
-cargarSelectProductos();
+        cargarSelectProductos();
 
-})
+    })
 
-.catch(error=>{
+    .catch(error => {
 
-console.error(
-"Error productos",
-error
-);
+        console.error(
+        "Error cargando productos:",
+        error
+        );
 
-});
+    });
 
 }
 
 
-// EMPRENDIMIENTOS
-function cargarEmprendimientos(){
+// CARGAR EMPRENDIMIENTOS
+function cargarEmprendimientos() {
 
-const select =
-document.getElementById(
-"emprendimientoVenta"
-);
+    const select =
+    document.getElementById("emprendimientoVenta");
 
 
-// EMPRENDEDORA
-if(
-rol==="emprendedora"
-){
+    // EMPRENDEDORA
+    if (rol === "emprendedora") {
 
-select.innerHTML=`
+        select.innerHTML = `
 
-<option
-value="${usuario.emprendimiento}"
->
+            <option value="${usuario.emprendimiento}">
 
-${usuario.emprendimiento}
+                ${usuario.emprendimiento}
 
-</option>
+            </option>
 
-`;
+        `;
 
-select.value=
-usuario.emprendimiento;
+        select.value =
+        usuario.emprendimiento;
 
-select.disabled=true;
+        // BLOQUEAR
+        select.style.pointerEvents = "none";
 
-cargarSelectProductos();
+        select.style.background = "#f5f5f5";
 
-return;
+        cargarSelectProductos();
 
-}
+        return;
+
+    }
 
 
-// ADMIN Y VENDEDORA
-fetch(API_USUARIOS)
+    // ADMIN Y VENDEDORA
+    fetch(API_USUARIOS)
 
-.then(
-res=>res.json()
-)
+    .then(res => res.json())
 
-.then(data=>{
+    .then(data => {
 
-select.innerHTML=`
+        select.innerHTML =
+        `<option value="">Seleccionar</option>`;
 
-<option value="">
+        data.usuarios.forEach(u => {
 
-Seleccionar
+            if (
 
-</option>
+                u.rol &&
 
-`;
+                u.rol.toLowerCase() === "emprendedora"
 
-data.usuarios
-.forEach(u=>{
+            ) {
 
-if(
+                select.innerHTML += `
 
-u.rol &&
+                    <option value="${u.emprendimiento}">
 
-u.rol
-.toLowerCase()
-==="emprendedora"
+                        ${u.emprendimiento}
 
-){
+                    </option>
 
-select.innerHTML+=`
+                `;
 
-<option
-value="${u.emprendimiento}"
->
+            }
 
-${u.emprendimiento}
+        });
 
-</option>
+    })
 
-`;
+    .catch(error => {
 
-}
+        console.error(
+        "Error cargando emprendimientos:",
+        error
+        );
 
-});
-
-});
+    });
 
 }
 
 
-// PRODUCTOS POR EMPRENDIMIENTO
-function cargarSelectProductos(){
+// CARGAR PRODUCTOS SEGÚN EMPRENDIMIENTO
+function cargarSelectProductos() {
 
-const emprendimiento=
+    const emprendimiento =
 
-document
-.getElementById(
-"emprendimientoVenta"
-)
-.value;
+    document.getElementById("emprendimientoVenta")
+    .value;
 
 
-const select=
-
-document
-.getElementById(
-"productoVenta"
-);
-
-select.innerHTML=`
-
-<option value="">
-
-Seleccionar producto
-
-</option>
-
-`;
+    const select =
+    document.getElementById("productoVenta");
 
 
-productos.forEach(p=>{
+    select.innerHTML =
+    `<option value="">Seleccionar producto</option>`;
 
-if(
 
-!emprendimiento ||
+    productos.forEach(p => {
 
-p.emprendedora===emprendimiento
+        // IMPORTANTE:
+        // LA COLUMNA PRODUCTOS ES:
+        // emprendedora
 
-){
+        if (
 
-select.innerHTML+=`
+            !emprendimiento ||
 
-<option
-value="${p.id}"
->
+            p.emprendedora === emprendimiento
 
-${p.nombreProducto}
+        ) {
 
--
+            select.innerHTML += `
 
-$${p.precioProducto}
+                <option value="${p.id}">
 
-</option>
+                    ${p.nombreProducto}
+                    -
+                    $${p.precioProducto}
 
-`;
+                </option>
 
-}
+            `;
 
-});
+        }
+
+    });
 
 }
 
 
-// BUSCADOR
-function filtrarProductos(){
+// FILTRAR PRODUCTOS
+function filtrarProductos() {
 
-const texto=
+    const texto =
 
-document
-.getElementById(
-"buscarProductoVenta"
-)
-.value
-.toLowerCase();
+    document.getElementById("buscarProductoVenta")
+    .value
+    .toLowerCase();
 
 
-const emprendimiento=
+    const emprendimiento =
 
-document
-.getElementById(
-"emprendimientoVenta"
-)
-.value;
+    document.getElementById("emprendimientoVenta")
+    .value;
 
 
-const select=
-
-document
-.getElementById(
-"productoVenta"
-);
+    const select =
+    document.getElementById("productoVenta");
 
 
-select.innerHTML=`
-
-<option value="">
-
-Seleccionar producto
-
-</option>
-
-`;
+    select.innerHTML =
+    `<option value="">Seleccionar producto</option>`;
 
 
-productos.forEach(p=>{
+    productos.forEach(p => {
 
-if(
+        if (
 
-(
+            (!emprendimiento ||
 
-!emprendimiento ||
+            p.emprendedora === emprendimiento)
 
-p.emprendedora===
-emprendimiento
+            &&
 
-)
+            p.nombreProducto
+            .toLowerCase()
+            .includes(texto)
 
-&&
+        ) {
 
-p.nombreProducto
-.toLowerCase()
-.includes(texto)
+            select.innerHTML += `
 
-){
+                <option value="${p.id}">
 
-select.innerHTML+=`
+                    ${p.nombreProducto}
+                    -
+                    $${p.precioProducto}
 
-<option
-value="${p.id}"
->
+                </option>
 
-${p.nombreProducto}
+            `;
 
--
+        }
 
-$${p.precioProducto}
-
-</option>
-
-`;
-
-}
-
-});
+    });
 
 }
 
 
 // AGREGAR PRODUCTO
-function agregarProducto(){
+function agregarProducto() {
 
-const id=
-
-document
-.getElementById(
-"productoVenta"
-)
-.value;
+    const id =
+    document.getElementById("productoVenta").value;
 
 
-const cantidad=
+    const cantidad =
 
-Number(
-
-document
-.getElementById(
-"cantidadVenta"
-)
-.value
-
-);
+    Number(
+        document.getElementById("cantidadVenta")
+        .value
+    );
 
 
-if(
+    // VALIDAR
+    if (!id || !cantidad) {
 
-!id ||
+        alert("Seleccione producto y cantidad");
 
-cantidad<=0
+        return;
 
-){
-
-alert(
-"Seleccione producto y cantidad"
-);
-
-return;
-
-}
+    }
 
 
-const producto=
-
-productos.find(
-p=>p.id==id
-);
+    const producto =
+    productos.find(p => p.id == id);
 
 
-if(!producto){
+    // VALIDAR STOCK
+    if (cantidad > Number(producto.stock)) {
 
-alert(
-"Producto inválido"
-);
+        alert("Stock insuficiente");
 
-return;
+        return;
 
-}
+    }
 
 
-if(
+    // CALCULAR TOTAL
+    const total =
+    cantidad * Number(producto.precioProducto);
 
-cantidad>
 
-Number(
-producto.stock
-)
+    // AGREGAR AL CARRITO
+    carrito.push({
 
-){
+        id: producto.id,
 
-alert(
-"Stock insuficiente"
-);
+        codigo:
+        producto.codigoProducto,
 
-return;
+        nombre:
+        producto.nombreProducto,
+
+        emprendimiento:
+        producto.emprendedora,
+
+        cantidad,
+
+        precio:
+        Number(producto.precioProducto),
+
+        total
+
+    });
+
+
+    // RENDER
+    renderCarrito();
 
 }
 
 
-const total=
+// RENDER CARRITO
+function renderCarrito() {
 
-cantidad*
-
-Number(
-producto.precioProducto
-);
+    const tabla =
+    document.getElementById("detalleVenta");
 
 
-carrito.push({
-
-id:
-producto.id,
-
-codigo:
-producto.codigoProducto,
-
-nombre:
-producto.nombreProducto,
-
-emprendimiento:
-producto.emprendedora,
-
-cantidad,
-
-precio:
-Number(
-producto.precioProducto
-),
-
-total
-
-});
+    tabla.innerHTML = "";
 
 
-renderCarrito();
-
-document
-.getElementById(
-"cantidadVenta"
-)
-.value="";
-
-}
+    let totalVenta = 0;
 
 
-// RENDER
-function renderCarrito(){
+    carrito.forEach((item,index) => {
 
-const tabla=
+        totalVenta += item.total;
 
-document
-.getElementById(
-"detalleVenta"
-);
+        tabla.innerHTML += `
 
-tabla.innerHTML="";
+            <tr>
 
+                <td>${item.emprendimiento}</td>
 
-let totalVenta=0;
+                <td>${item.nombre}</td>
 
+                <td>${item.cantidad}</td>
 
-carrito.forEach(
+                <td>$${item.precio}</td>
 
-(item,index)=>{
+                <td>$${item.total}</td>
 
-totalVenta+=
-item.total;
+                <td>
 
-tabla.innerHTML+=`
+                    <button
+                    onclick="eliminarItem(${index})">
 
-<tr>
+                    X
 
-<td>
-${item.emprendimiento}
-</td>
+                    </button>
 
-<td>
-${item.nombre}
-</td>
+                </td>
 
-<td>
-${item.cantidad}
-</td>
+            </tr>
 
-<td>
+        `;
 
-$${item.precio}
-
-</td>
-
-<td>
-
-$${item.total}
-
-</td>
-
-<td>
-
-<button
-
-onclick=
-
-"eliminarItem(${index})"
-
->
-
-X
-
-</button>
-
-</td>
-
-</tr>
-
-`;
-
-}
-
-);
+    });
 
 
-document
-.getElementById(
-"totalVenta"
-)
-.textContent=
-totalVenta;
+    document.getElementById("totalVenta")
+    .textContent = totalVenta;
 
 }
 
 
-// ELIMINAR
-function eliminarItem(index){
+// ELIMINAR ITEM
+function eliminarItem(index) {
 
-carrito.splice(
-index,
-1
-);
+    carrito.splice(index,1);
 
-renderCarrito();
+    renderCarrito();
 
 }
 
 
 // REGISTRAR VENTA
-async function registrarVenta(){
+async function registrarVenta() {
 
-if(
-carrito.length===0
-){
+    // VALIDAR CARRITO
+    if (carrito.length === 0) {
 
-alert(
-"Agregue productos"
-);
+        alert("Agregue productos");
 
-return;
+        return;
 
-}
+    }
 
 
-const canalVenta=
+    const canalVenta =
+    document.getElementById("medioVenta").value;
 
-document
-.getElementById(
-"medioVenta"
-)
-.value;
 
+    try {
 
-try{
+        for (const item of carrito) {
 
-for(
+            // GUARDAR VENTA
+            await fetch(API_VENTAS, {
 
-const item
+                method:"POST",
 
-of carrito
+                headers:{
+                    "Content-Type":"application/json"
+                },
 
-){
+                body: JSON.stringify({
 
-await fetch(
+                    venta: {
 
-API_VENTAS,
+                        productoId:
+                        item.id,
 
-{
+                        codigoProducto:
+                        item.codigo,
 
-method:"POST",
+                        nombreProducto:
+                        item.nombre,
 
-headers:{
+                        emprendimiento:
+                        item.emprendimiento,
 
-"Content-Type":
+                        cantidad:
+                        item.cantidad,
 
-"application/json"
+                        canalVenta:
+                        canalVenta,
 
-},
+                        fechaVenta:
+                        new Date()
+                        .toISOString()
+                        .split("T")[0],
 
-body:
+                        horaVenta:
+                        new Date()
+                        .toLocaleTimeString(),
 
-JSON.stringify({
+                        vendedorNombre:
+                        usuario.nombre,
 
-venta:{
+                        vendedorRol:
+                        usuario.rol,
 
-productoId:
-item.id,
+                        vendedorCodigo:
+                        usuario.codigoAcceso || "",
 
-codigoProducto:
-item.codigo,
+                        total:
+                        item.total
 
-nombreProducto:
-item.nombre,
+                    }
 
-emprendimiento:
-item.emprendimiento,
+                })
 
-cantidad:
-item.cantidad,
+            });
 
-canalVenta:
-canalVenta,
 
-fechaVenta:
+            // BUSCAR PRODUCTO
+            const producto =
+            productos.find(p => p.id == item.id);
 
-new Date()
 
-.toISOString()
+            // NUEVO STOCK
+            const nuevoStock =
 
-.split("T")[0],
+            Number(producto.stock)
 
-horaVenta:
+            -
 
-new Date()
+            item.cantidad;
 
-.toLocaleTimeString(),
 
-usuarioRegistro:
+            // ACTUALIZAR STOCK
+            await fetch(`${API_PRODUCTOS}/${producto.id}`, {
 
-usuario.nombre
-|| "",
+                method:"PUT",
 
-rolRegistro:
+                headers:{
+                    "Content-Type":"application/json"
+                },
 
-usuario.rol
-|| "",
+                body: JSON.stringify({
 
-codigoRegistro:
+                    producto: {
 
-usuario.codigoAcceso
-|| "",
+                        stock: nuevoStock
 
-usuarioCompleto:
+                    }
 
-`${usuario.nombre}
+                })
 
--
+            });
 
-${usuario.rol}`,
 
-total:
+            // ALERTA STOCK
+            if (nuevoStock <= 5) {
 
-item.total
+                alert(
+                "Stock bajo de "
+                +
+                producto.nombreProducto
+                );
 
-}
+            }
 
-})
+        }
 
-}
 
-);
+        // MENSAJE
+        alert("Venta registrada correctamente");
 
 
-const producto=
+        // LIMPIAR
+        carrito = [];
 
-productos.find(
 
-p=>p.id==item.id
+        renderCarrito();
 
-);
 
+        document.getElementById("cantidadVenta")
+        .value = "";
 
-const nuevoStock=
 
-Number(
-producto.stock
-)
+        cargarProductos();
 
--
+    }
 
-item.cantidad;
+    catch(error) {
 
+        console.error(
+        "Error registrando venta:",
+        error
+        );
 
-await fetch(
+        alert("Error al registrar venta");
 
-`${API_PRODUCTOS}/${producto.id}`,
-
-{
-
-method:"PUT",
-
-headers:{
-
-"Content-Type":
-
-"application/json"
-
-},
-
-body:
-
-JSON.stringify({
-
-producto:{
-
-stock:
-
-nuevoStock
-
-}
-
-})
-
-}
-
-);
-
-
-if(
-
-nuevoStock<=5
-
-){
-
-alert(
-
-"Stock bajo de "
-
-+
-
-producto.nombreProducto
-
-);
-
-}
-
-}
-
-
-alert(
-
-"Venta registrada correctamente"
-
-);
-
-
-carrito=[];
-
-renderCarrito();
-
-cargarProductos();
-
-}
-
-catch(error){
-
-console.error(
-error
-);
-
-alert(
-"Error registrando venta"
-);
-
-}
+    }
 
 }
 
 
 // VOLVER
-function volverPagina(){
+function volverPagina() {
 
-window.history.back();
+    window.history.back();
 
 }
 
 
 // LOGOUT
-function logout(){
+function logout() {
 
-sessionStorage.clear();
+    sessionStorage.clear();
 
-window.location.href=
-"index.html";
+    window.location.href = "index.html";
 
 }
