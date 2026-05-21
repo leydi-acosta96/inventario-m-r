@@ -1,19 +1,21 @@
-const API_VENTAS =
+const API_VENTAS=
 "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/ventas";
 
-const API_PRODUCTOS =
+const API_PRODUCTOS=
 "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/productos";
 
-const API_USUARIOS =
+const API_USUARIOS=
 "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/usuarios";
 
 
-let ventas = [];
-let productos = [];
-let grafico;
+let ventas=[];
+let productos=[];
+
+let globalChart;
+let filtroChart;
+let canalChart;
 
 
-// INICIO
 document.addEventListener(
 "DOMContentLoaded",
 async()=>{
@@ -28,89 +30,50 @@ generarReporte();
 );
 
 
-// CARGAR DATOS
 async function cargarDatos(){
 
-try{
+ventas=
+(await fetch(API_VENTAS)
+.then(r=>r.json()))
+.ventas||[];
 
-const resVentas =
-await fetch(API_VENTAS);
-
-const dataVentas =
-await resVentas.json();
-
-ventas =
-dataVentas.ventas || [];
-
-
-const resProductos =
-await fetch(API_PRODUCTOS);
-
-const dataProductos =
-await resProductos.json();
-
-productos =
-dataProductos.productos || [];
-
-}
-catch(error){
-
-console.error(
-"Error cargando datos",
-error
-);
-
-}
+productos=
+(await fetch(API_PRODUCTOS)
+.then(r=>r.json()))
+.productos||[];
 
 }
 
 
-// CARGAR FILTROS
 async function cargarFiltros(){
 
-try{
+const usuarios=
 
-const res =
-await fetch(API_USUARIOS);
+(await fetch(API_USUARIOS)
+.then(r=>r.json()))
+.usuarios||[];
 
-const data =
-await res.json();
 
-const filtroEmp =
+const emp=
 document.getElementById(
 "filtroEmprendedora"
 );
 
-const filtroVend =
+const persona=
 document.getElementById(
-"filtroVendedora"
+"filtroPersona"
 );
 
-filtroEmp.innerHTML =
-`<option value="">Todas</option>`;
 
-filtroVend.innerHTML =
-`<option value="">Todas</option>`;
-
-
-data.usuarios.forEach(u=>{
-
-const rol =
-u.rol?.toLowerCase();
+usuarios.forEach(u=>{
 
 if(
-
-rol==="emprendedora"
-
-&&
-
 u.emprendimiento
-
 ){
 
-filtroEmp.innerHTML += `
+emp.innerHTML+=`
 
-<option value="${u.emprendimiento}">
+<option>
 
 ${u.emprendimiento}
 
@@ -122,18 +85,12 @@ ${u.emprendimiento}
 
 
 if(
-
-rol==="vendedora"
-
-&&
-
 u.nombre
-
 ){
 
-filtroVend.innerHTML += `
+persona.innerHTML+=`
 
-<option value="${u.nombre}">
+<option>
 
 ${u.nombre}
 
@@ -146,59 +103,41 @@ ${u.nombre}
 });
 
 }
-catch(error){
-
-console.error(
-"Error filtros",
-error
-);
-
-}
-
-}
 
 
-// GENERAR REPORTE
 function generarReporte(){
 
-const inicio =
-document
-.getElementById(
+const inicio=
+document.getElementById(
 "fechaInicio"
-)
-.value;
+).value;
 
-const fin =
-document
-.getElementById(
+const fin=
+document.getElementById(
 "fechaFin"
-)
-.value;
+).value;
 
-const emp =
-document
-.getElementById(
+const emp=
+document.getElementById(
 "filtroEmprendedora"
-)
-.value;
+).value;
 
-const vend =
-document
-.getElementById(
-"filtroVendedora"
-)
-.value;
+const persona=
+document.getElementById(
+"filtroPersona"
+).value;
+
+const canal=
+document.getElementById(
+"filtroCanal"
+).value;
 
 
-// FILTRAR VENTAS
-let ventasFiltradas =
+const filtradas=
+
 ventas.filter(v=>{
 
-const fecha =
-v.fechaVenta || "";
-
-// COMPATIBILIDAD
-const empVenta =
+const emprendimiento=
 
 v.emprendimiento
 
@@ -210,222 +149,207 @@ v.emprendedora
 
 "";
 
-return(
 
-(!inicio || fecha >= inicio)
+const vendedor=
 
-&&
-
-(!fin || fecha <= fin)
-
-&&
-
-(!emp || empVenta === emp)
-
-&&
-
-(
-
-!vend
+v.vendedorNombre
 
 ||
 
-v.vendedorNombre===vend
+"";
 
-)
+
+return(
+
+(!inicio||
+
+v.fechaVenta>=inicio)
+
+&&
+
+(!fin||
+
+v.fechaVenta<=fin)
+
+&&
+
+(!emp||
+
+emprendimiento===emp)
+
+&&
+
+(!persona||
+
+vendedor===persona)
+
+&&
+
+(!canal||
+
+v.canalVenta===canal)
 
 );
 
 });
 
 
-// TOTAL VENTAS
-const totalVentas =
-
-ventasFiltradas.reduce(
-
-(a,b)=>
-
-a+
-
-Number(
-b.total || 0
-),
-
-0
-
+actualizarCards(
+filtradas
 );
 
-
-// PRODUCTOS VENDIDOS
-const vendidos =
-
-ventasFiltradas.reduce(
-
-(a,b)=>
-
-a+
-
-Number(
-b.cantidad || 0
-),
-
-0
-
+renderVentas(
+filtradas
 );
 
+renderInventario(
+emp
+);
 
-// INVENTARIO FILTRADO
-const inventario =
+renderTopProductos(
+filtradas
+);
 
-productos.filter(p=>{
+graficaGlobal();
 
-if(!emp){
+graficaFiltro(
+filtradas
+);
 
-return true;
+graficaCanal(
+filtradas
+);
 
 }
 
-return (
 
-p.emprendedora===emp
+function actualizarCards(data){
 
-||
+const total=
 
-p.emprendimiento===emp
-
-);
-
-});
-
-const stockTotal =
-
-inventario.reduce(
+data.reduce(
 
 (a,b)=>
 
 a+
 
-Number(
-b.stock || 0
-),
+Number(b.total),
 
 0
 
 );
 
+const vendidos=
 
-// CARDS
-document
-.getElementById(
+data.reduce(
+
+(a,b)=>
+
+a+
+
+Number(b.cantidad),
+
+0
+
+);
+
+const ticket=
+
+data.length
+
+?
+
+(total/data.length)
+
+:0;
+
+
+document.getElementById(
 "totalVentas"
-)
-.textContent =
+).textContent=
 
-totalVentas.toFixed(2);
+"$"+
+
+total.toFixed(2);
 
 
-document
-.getElementById(
+document.getElementById(
 "productosVendidos"
-)
-.textContent =
+).textContent=
 
 vendidos;
 
 
-document
-.getElementById(
+document.getElementById(
+"ticketPromedio"
+).textContent=
+
+"$"+
+
+ticket.toFixed(2);
+
+
+document.getElementById(
 "inventarioActual"
-)
-.textContent =
+).textContent=
 
-stockTotal;
+productos.reduce(
 
+(a,b)=>
 
-// TABLAS
-renderTablaVentas(
-ventasFiltradas
-);
+a+
 
-renderInventario(
-inventario
-);
+Number(b.stock),
 
+0
 
-// GRÁFICO
-crearGrafico(
-ventasFiltradas
 );
 
 }
 
 
-// TABLA VENTAS
-function renderTablaVentas(datos){
+function renderVentas(data){
 
-const tabla =
-document
-.getElementById(
+const tabla=
+document.getElementById(
 "tablaVentas"
 );
 
 tabla.innerHTML="";
 
 
-datos.forEach(v=>{
+data.forEach(v=>{
 
-const emp =
-
-v.emprendimiento
-
-||
-
-v.emprendedora
-
-||
-
-"-";
-
-
-tabla.innerHTML +=`
+tabla.innerHTML+=`
 
 <tr>
 
 <td>
-
-${v.fechaVenta||""}
-
+${v.fechaVenta}
 </td>
 
 <td>
-
-${v.nombreProducto||""}
-
+${v.nombreProducto}
 </td>
 
 <td>
-
-${emp}
-
+${v.emprendimiento}
 </td>
 
 <td>
-
-${v.vendedorNombre||""}
-
+${v.vendedorNombre}
 </td>
 
 <td>
-
-${v.cantidad||0}
-
+${v.canalVenta}
 </td>
 
 <td>
+${v.cantidad}
+</td>
 
-$${v.total||0}
-
+<td>
+$${v.total}
 </td>
 
 </tr>
@@ -437,21 +361,31 @@ $${v.total||0}
 }
 
 
-// INVENTARIO
-function renderInventario(datos){
+function renderInventario(emp){
 
-const tabla =
-document
-.getElementById(
+const tabla=
+document.getElementById(
 "tablaInventario"
 );
 
 tabla.innerHTML="";
 
 
-datos.forEach(p=>{
+productos
 
-tabla.innerHTML +=`
+.filter(p=>
+
+!emp
+
+||
+
+p.emprendedora===emp
+
+)
+
+.forEach(p=>{
+
+tabla.innerHTML+=`
 
 <tr>
 
@@ -463,31 +397,13 @@ ${p.nombreProducto}
 
 <td>
 
-${
-
-p.emprendedora
-
-||
-
-p.emprendimiento
-
-||
-
-""
-
-}
+${p.emprendedora}
 
 </td>
 
 <td>
 
 ${p.stock}
-
-</td>
-
-<td>
-
-${p.estadoProducto}
 
 </td>
 
@@ -500,8 +416,69 @@ ${p.estadoProducto}
 }
 
 
-// GRAFICO
-function crearGrafico(ventas){
+function renderTopProductos(data){
+
+const top={};
+
+data.forEach(v=>{
+
+top[v.nombreProducto]=
+
+(top[v.nombreProducto]||0)
+
++
+
+Number(v.cantidad);
+
+});
+
+
+const tabla=
+document.getElementById(
+"tablaTopProductos"
+);
+
+tabla.innerHTML="";
+
+
+Object.entries(top)
+
+.sort(
+
+(a,b)=>
+
+b[1]-a[1]
+
+)
+
+.forEach(p=>{
+
+tabla.innerHTML+=`
+
+<tr>
+
+<td>
+
+${p[0]}
+
+</td>
+
+<td>
+
+${p[1]}
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+
+function graficaGlobal(){
 
 const resumen={};
 
@@ -510,10 +487,6 @@ ventas.forEach(v=>{
 const emp=
 
 v.emprendimiento
-
-||
-
-v.emprendedora
 
 ||
 
@@ -526,27 +499,23 @@ resumen[emp]=
 
 +
 
-Number(
-v.total||0
-);
+Number(v.total);
 
 });
 
 
-if(grafico){
+if(globalChart){
 
-grafico.destroy();
+globalChart.destroy();
 
 }
 
 
-grafico =
+globalChart=
 
 new Chart(
 
-document.getElementById(
-"graficoVentas"
-),
+graficoGlobal,
 
 {
 
@@ -555,7 +524,6 @@ type:"bar",
 data:{
 
 labels:
-
 Object.keys(
 resumen
 ),
@@ -563,10 +531,9 @@ resumen
 datasets:[{
 
 label:
-"Ventas",
+"Ventas Globales",
 
 data:
-
 Object.values(
 resumen
 )
@@ -582,36 +549,143 @@ resumen
 }
 
 
-// PDF
+function graficaFiltro(data){
+
+const resumen={};
+
+data.forEach(v=>{
+
+resumen[v.nombreProducto]=
+
+(resumen[v.nombreProducto]||0)
+
++
+
+Number(v.total);
+
+});
+
+
+if(filtroChart){
+
+filtroChart.destroy();
+
+}
+
+
+filtroChart=
+
+new Chart(
+
+graficoFiltro,
+
+{
+
+type:"bar",
+
+data:{
+
+labels:
+Object.keys(
+resumen),
+
+datasets:[{
+
+label:
+"Productos",
+
+data:
+Object.values(
+resumen)
+
+}]
+
+}
+
+}
+
+);
+
+}
+
+
+function graficaCanal(data){
+
+const resumen={};
+
+data.forEach(v=>{
+
+resumen[v.canalVenta]=
+
+(resumen[v.canalVenta]||0)
+
++
+
+Number(v.total);
+
+});
+
+
+if(canalChart){
+
+canalChart.destroy();
+
+}
+
+
+canalChart=
+
+new Chart(
+
+graficoCanal,
+
+{
+
+type:"pie",
+
+data:{
+
+labels:
+Object.keys(
+resumen),
+
+datasets:[{
+
+data:
+Object.values(
+resumen)
+
+}]
+
+}
+
+}
+
+);
+
+}
+
+
 function generarPDF(){
 
-const {
+const{
 
 jsPDF
 
 }=window.jspdf;
 
-
-const pdf =
+const pdf=
 new jsPDF();
 
-
-pdf.setFontSize(16);
-
 pdf.text(
-"Reporte Sistema",
+"Reporte",
 20,
 20
 );
 
-
-pdf.setFontSize(12);
-
 pdf.text(
 
-"Total ventas: "
-
-+
+"Total ventas: "+
 
 document
 .getElementById(
@@ -625,45 +699,6 @@ document
 
 );
 
-
-pdf.text(
-
-"Productos vendidos: "
-
-+
-
-document
-.getElementById(
-"productosVendidos"
-)
-.textContent,
-
-20,
-
-55
-
-);
-
-
-pdf.text(
-
-"Inventario actual: "
-
-+
-
-document
-.getElementById(
-"inventarioActual"
-)
-.textContent,
-
-20,
-
-70
-
-);
-
-
 pdf.save(
 "Reporte.pdf"
 );
@@ -671,20 +706,18 @@ pdf.save(
 }
 
 
-// LOGOUT
 function logout(){
 
 sessionStorage.clear();
 
-window.location.href=
+location.href=
 "index.html";
 
 }
 
 
-// VOLVER
 function volverPagina(){
 
-window.history.back();
+history.back();
 
 }
