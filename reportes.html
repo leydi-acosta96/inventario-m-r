@@ -2,48 +2,68 @@
 <html lang="es">
 
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Reportes</title>
 
-<link rel="stylesheet"
-href="styles.css">
+<link rel="stylesheet" href="styles.css">
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script
+src="https://cdn.jsdelivr.net/npm/chart.js">
+</script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+</script>
 
 </head>
 
 <body>
 
-<div class="barra-superior">
+<div class="acciones-superior">
 
-<button onclick="volverPagina()">
+<button onclick="volverPagina()"
+class="btn-top volver">
+
 ← Volver
+
 </button>
 
-<button onclick="logout()">
+<button onclick="logout()"
+class="btn-top cerrar">
+
 Cerrar sesión
+
 </button>
 
 </div>
 
+
 <h1>Reportes del Sistema</h1>
 
-<div class="filtros-reportes">
+
+<div class="filtros">
+
+<label>Fecha inicio</label>
 
 <input
 type="date"
-id="fechaInicio"
->
+id="fechaInicio">
+
+
+<label>Fecha fin</label>
 
 <input
 type="date"
-id="fechaFin"
->
+id="fechaFin">
+
+
+<label>Emprendedora</label>
 
 <select id="filtroEmprendedora">
 
@@ -53,28 +73,29 @@ Todas
 
 </select>
 
-<select id="filtroPersona">
+
+<label>Vendedora</label>
+
+<select id="filtroVendedora">
 
 <option value="">
-Todas las personas
+Todas
 </option>
 
 </select>
 
-<select id="filtroCanal">
-
-<option value="">
-Todos canales
-</option>
-
-</select>
 
 <button onclick="generarReporte()">
+
 Generar Reporte
+
 </button>
 
+
 <button onclick="generarPDF()">
+
 Exportar PDF
+
 </button>
 
 </div>
@@ -89,37 +110,35 @@ Exportar PDF
 <h3>Total Ventas</h3>
 
 <p id="totalVentas">
+
 0
+
 </p>
 
 </div>
+
 
 <div class="card">
 
 <h3>Productos Vendidos</h3>
 
 <p id="productosVendidos">
+
 0
+
 </p>
 
 </div>
 
+
 <div class="card">
 
-<h3>Inventario</h3>
+<h3>Inventario Actual</h3>
 
 <p id="inventarioActual">
+
 0
-</p>
 
-</div>
-
-<div class="card">
-
-<h3>Ticket Promedio</h3>
-
-<p id="ticketPromedio">
-0
 </p>
 
 </div>
@@ -136,11 +155,15 @@ Exportar PDF
 <tr>
 
 <th>Fecha</th>
+
 <th>Producto</th>
+
 <th>Emprendimiento</th>
-<th>Persona</th>
-<th>Canal</th>
+
+<th>Vendedora</th>
+
 <th>Cantidad</th>
+
 <th>Total</th>
 
 </tr>
@@ -148,29 +171,6 @@ Exportar PDF
 </thead>
 
 <tbody id="tablaVentas">
-
-</tbody>
-
-</table>
-
-
-<h2>Productos más vendidos</h2>
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Producto</th>
-
-<th>Cantidad</th>
-
-</tr>
-
-</thead>
-
-<tbody id="tablaTopProductos">
 
 </tbody>
 
@@ -204,26 +204,20 @@ Exportar PDF
 </table>
 
 
-<h2>Ventas globales</h2>
+<h2>Ventas por Emprendimiento</h2>
 
 <canvas
-id="graficoGlobal"
-height="100">
-</canvas>
+id="graficoVentas">
 
-
-<h2>Ventas filtradas</h2>
-
-<canvas
-id="graficoFiltro"
-height="100">
 </canvas>
 
 
 <script src="auth.js"></script>
 
 <script>
+
 validarRol(["admin"]);
+
 </script>
 
 <script src="reportes.js"></script>
