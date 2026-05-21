@@ -2,7 +2,6 @@
 <html lang="es">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1">
@@ -32,30 +31,27 @@ Cerrar sesión
 
 </div>
 
-<h1>
-Reportes del Sistema
-</h1>
+<h1>Reportes del Sistema</h1>
 
-
-<div class="filtros">
+<div class="filtros-reportes">
 
 <input
 type="date"
-id="fechaInicio">
+id="fechaInicio"
+>
 
 <input
 type="date"
-id="fechaFin">
-
+id="fechaFin"
+>
 
 <select id="filtroEmprendedora">
 
 <option value="">
-Todos emprendimientos
+Todas
 </option>
 
 </select>
-
 
 <select id="filtroPersona">
 
@@ -65,36 +61,17 @@ Todas las personas
 
 </select>
 
-
 <select id="filtroCanal">
 
 <option value="">
 Todos canales
 </option>
 
-<option>
-Showroom
-</option>
-
-<option>
-WhatsApp
-</option>
-
-<option>
-Instagram
-</option>
-
-<option>
-Tienda Física
-</option>
-
 </select>
-
 
 <button onclick="generarReporte()">
 Generar Reporte
 </button>
-
 
 <button onclick="generarPDF()">
 Exportar PDF
@@ -150,9 +127,7 @@ Exportar PDF
 </div>
 
 
-<h2>
-Ventas
-</h2>
+<h2>Ventas</h2>
 
 <table>
 
@@ -161,17 +136,11 @@ Ventas
 <tr>
 
 <th>Fecha</th>
-
 <th>Producto</th>
-
 <th>Emprendimiento</th>
-
 <th>Persona</th>
-
 <th>Canal</th>
-
 <th>Cantidad</th>
-
 <th>Total</th>
 
 </tr>
@@ -185,9 +154,7 @@ Ventas
 </table>
 
 
-<h2>
-Productos más vendidos
-</h2>
+<h2>Productos más vendidos</h2>
 
 <table>
 
@@ -203,17 +170,14 @@ Productos más vendidos
 
 </thead>
 
-<tbody
-id="tablaTopProductos">
+<tbody id="tablaTopProductos">
 
 </tbody>
 
 </table>
 
 
-<h2>
-Inventario
-</h2>
+<h2>Inventario</h2>
 
 <table>
 
@@ -227,47 +191,42 @@ Inventario
 
 <th>Stock</th>
 
+<th>Estado</th>
+
 </tr>
 
 </thead>
 
-<tbody
-id="tablaInventario">
+<tbody id="tablaInventario">
 
 </tbody>
 
 </table>
 
 
-<h2>
-Ventas globales
-</h2>
+<h2>Ventas globales</h2>
 
 <canvas
-id="graficoGlobal">
+id="graficoGlobal"
+height="100">
 </canvas>
 
 
-<h2>
-Resultados filtrados
-</h2>
+<h2>Ventas filtradas</h2>
 
 <canvas
-id="graficoFiltro">
+id="graficoFiltro"
+height="100">
 </canvas>
 
 
-<h2>
-Ventas por canal
-</h2>
+<script src="auth.js"></script>
 
-<canvas
-id="graficoCanal">
-</canvas>
-
-
-<script src="reportes.js">
+<script>
+validarRol(["admin"]);
 </script>
+
+<script src="reportes.js"></script>
 
 </body>
 
