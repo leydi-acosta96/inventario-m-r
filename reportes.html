@@ -4,98 +4,100 @@
 <head>
 
 <meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
 
 <title>Reportes</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet"
+href="styles.css">
 
-<script
-src="https://cdn.jsdelivr.net/npm/chart.js">
-</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script
-src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 </head>
 
 <body>
 
-<div class="acciones-superior">
+<div class="barra-superior">
 
-<button onclick="volverPagina()"
-class="btn-top volver">
-
+<button onclick="volverPagina()">
 ← Volver
-
 </button>
 
-<button onclick="logout()"
-class="btn-top cerrar">
-
+<button onclick="logout()">
 Cerrar sesión
-
 </button>
 
 </div>
 
-
-<h1>Reportes del Sistema</h1>
+<h1>
+Reportes del Sistema
+</h1>
 
 
 <div class="filtros">
 
-<label>Fecha inicio</label>
-
 <input
 type="date"
 id="fechaInicio">
-
-
-<label>Fecha fin</label>
 
 <input
 type="date"
 id="fechaFin">
 
 
-<label>Emprendedora</label>
-
 <select id="filtroEmprendedora">
 
 <option value="">
-Todas
+Todos emprendimientos
 </option>
 
 </select>
 
 
-<label>Vendedora</label>
-
-<select id="filtroVendedora">
+<select id="filtroPersona">
 
 <option value="">
-Todas
+Todas las personas
+</option>
+
+</select>
+
+
+<select id="filtroCanal">
+
+<option value="">
+Todos canales
+</option>
+
+<option>
+Showroom
+</option>
+
+<option>
+WhatsApp
+</option>
+
+<option>
+Instagram
+</option>
+
+<option>
+Tienda Física
 </option>
 
 </select>
 
 
 <button onclick="generarReporte()">
-
 Generar Reporte
-
 </button>
 
 
 <button onclick="generarPDF()">
-
 Exportar PDF
-
 </button>
 
 </div>
@@ -110,35 +112,37 @@ Exportar PDF
 <h3>Total Ventas</h3>
 
 <p id="totalVentas">
-
 0
-
 </p>
 
 </div>
-
 
 <div class="card">
 
 <h3>Productos Vendidos</h3>
 
 <p id="productosVendidos">
-
 0
-
 </p>
 
 </div>
-
 
 <div class="card">
 
-<h3>Inventario Actual</h3>
+<h3>Inventario</h3>
 
 <p id="inventarioActual">
-
 0
+</p>
 
+</div>
+
+<div class="card">
+
+<h3>Ticket Promedio</h3>
+
+<p id="ticketPromedio">
+0
 </p>
 
 </div>
@@ -146,7 +150,9 @@ Exportar PDF
 </div>
 
 
-<h2>Ventas</h2>
+<h2>
+Ventas
+</h2>
 
 <table>
 
@@ -160,7 +166,9 @@ Exportar PDF
 
 <th>Emprendimiento</th>
 
-<th>Vendedora</th>
+<th>Persona</th>
+
+<th>Canal</th>
 
 <th>Cantidad</th>
 
@@ -177,7 +185,35 @@ Exportar PDF
 </table>
 
 
-<h2>Inventario</h2>
+<h2>
+Productos más vendidos
+</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Producto</th>
+
+<th>Cantidad</th>
+
+</tr>
+
+</thead>
+
+<tbody
+id="tablaTopProductos">
+
+</tbody>
+
+</table>
+
+
+<h2>
+Inventario
+</h2>
 
 <table>
 
@@ -191,36 +227,47 @@ Exportar PDF
 
 <th>Stock</th>
 
-<th>Estado</th>
-
 </tr>
 
 </thead>
 
-<tbody id="tablaInventario">
+<tbody
+id="tablaInventario">
 
 </tbody>
 
 </table>
 
 
-<h2>Ventas por Emprendimiento</h2>
+<h2>
+Ventas globales
+</h2>
 
 <canvas
-id="graficoVentas">
-
+id="graficoGlobal">
 </canvas>
 
 
-<script src="auth.js"></script>
+<h2>
+Resultados filtrados
+</h2>
 
-<script>
+<canvas
+id="graficoFiltro">
+</canvas>
 
-validarRol(["admin"]);
 
+<h2>
+Ventas por canal
+</h2>
+
+<canvas
+id="graficoCanal">
+</canvas>
+
+
+<script src="reportes.js">
 </script>
-
-<script src="reportes.js"></script>
 
 </body>
 
