@@ -237,11 +237,15 @@ productos.find(
 
 p=>
 
-String(p.id)
+String(
+p.codigoProducto
+).trim()
 
 ===
 
-String(v.productoId)
+String(
+v.codigoProducto
+).trim()
 
 )
 
@@ -259,6 +263,7 @@ producto.nombreProducto
 ||
 
 "Sin producto",
+
 
 emprendimiento:
 
@@ -338,6 +343,7 @@ graficaCanal(
 filtradas
 );
 
+}
 }
 
 
