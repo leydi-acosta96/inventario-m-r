@@ -1,20 +1,18 @@
-const API_VENTAS=
+const API_VENTAS =
 "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/ventas";
 
-const API_PRODUCTOS=
+const API_PRODUCTOS =
 "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/productos";
 
-const API_USUARIOS=
+const API_USUARIOS =
 "https://api.sheety.co/301327363ae1c8d017800bb4566af87c/bdFinal/usuarios";
 
-
-let ventas=[];
-let productos=[];
+let ventas = [];
+let productos = [];
 
 let globalChart;
 let filtroChart;
 let canalChart;
-
 
 document.addEventListener(
 "DOMContentLoaded",
@@ -26,54 +24,94 @@ await cargarFiltros();
 
 generarReporte();
 
-}
-);
-
+});
 
 async function cargarDatos(){
 
-ventas=
-(await fetch(API_VENTAS)
-.then(r=>r.json()))
-.ventas||[];
+try{
 
-productos=
-(await fetch(API_PRODUCTOS)
-.then(r=>r.json()))
-.productos||[];
+const ventasData =
+await fetch(API_VENTAS)
+.then(r=>r.json());
+
+ventas =
+ventasData.ventas || [];
+
+const productosData =
+await fetch(API_PRODUCTOS)
+.then(r=>r.json());
+
+productos =
+productosData.productos || [];
+
+}catch(error){
+
+console.log(error);
 
 }
 
+}
 
 async function cargarFiltros(){
 
-const usuarios=
+try{
 
+const usuarios =
 (await fetch(API_USUARIOS)
 .then(r=>r.json()))
-.usuarios||[];
+.usuarios || [];
 
-
-const emp=
+const emp =
 document.getElementById(
 "filtroEmprendedora"
 );
 
-const persona=
+const persona =
 document.getElementById(
-"filtroPersona"
+"filtroVendedora"
 );
 
+if(emp){
+
+emp.innerHTML=`
+
+<option value="">
+Todas
+</option>
+
+`;
+
+}
+
+if(persona){
+
+persona.innerHTML=`
+
+<option value="">
+Todas
+</option>
+
+`;
+
+}
 
 usuarios.forEach(u=>{
 
 if(
+
 u.emprendimiento
+
+&&
+
+emp
+
 ){
 
-emp.innerHTML+=`
+emp.innerHTML += `
 
-<option>
+<option
+value="${u.emprendimiento}"
+>
 
 ${u.emprendimiento}
 
@@ -83,14 +121,21 @@ ${u.emprendimiento}
 
 }
 
-
 if(
+
 u.nombre
+
+&&
+
+persona
+
 ){
 
-persona.innerHTML+=`
+persona.innerHTML += `
 
-<option>
+<option
+value="${u.nombre}"
+>
 
 ${u.nombre}
 
@@ -102,97 +147,88 @@ ${u.nombre}
 
 });
 
+}catch(error){
+
+console.log(
+"Error filtros",
+error
+);
+
 }
 
+}
 
 function generarReporte(){
 
-const inicio=
-document.getElementById(
+const inicio =
+document
+.getElementById(
 "fechaInicio"
-).value;
+)?.value || "";
 
-const fin=
-document.getElementById(
+const fin =
+document
+.getElementById(
 "fechaFin"
-).value;
+)?.value || "";
 
-const emp=
-document.getElementById(
+const emp =
+document
+.getElementById(
 "filtroEmprendedora"
-).value;
+)?.value || "";
 
-const persona=
-document.getElementById(
-"filtroPersona"
-).value;
+const persona =
+document
+.getElementById(
+"filtroVendedora"
+)?.value || "";
 
-const canal=
-document.getElementById(
-"filtroCanal"
-).value;
-
-
-const filtradas=
+let filtradas =
 
 ventas.filter(v=>{
 
-const emprendimiento=
+const emprendimiento =
 
-v.emprendimiento
+v.emprendimiento ||
 
-||
-
-v.emprendedora
-
-||
+v.emprendedora ||
 
 "";
 
+const vendedor =
 
-const vendedor=
-
-v.vendedorNombre
-
-||
+v.vendedorNombre ||
 
 "";
-
 
 return(
 
-(!inicio||
+(!inicio ||
 
-v.fechaVenta>=inicio)
-
-&&
-
-(!fin||
-
-v.fechaVenta<=fin)
+v.fechaVenta >= inicio)
 
 &&
 
-(!emp||
+(!fin ||
 
-emprendimiento===emp)
-
-&&
-
-(!persona||
-
-vendedor===persona)
+v.fechaVenta <= fin)
 
 &&
 
-(!canal||
+(!emp ||
 
-v.canalVenta===canal)
+emprendimiento === emp)
+
+&&
+
+(!persona ||
+
+vendedor === persona)
 
 );
 
 });
-
 
 actualizarCards(
 filtradas
@@ -216,97 +252,78 @@ graficaFiltro(
 filtradas
 );
 
-graficaCanal(
-filtradas
-);
-
 }
-
 
 function actualizarCards(data){
 
-const total=
+const total =
 
 data.reduce(
 
 (a,b)=>
 
 a+
-
-Number(b.total),
+Number(
+b.total||0
+),
 
 0
 
 );
 
-const vendidos=
+const vendidos =
 
 data.reduce(
 
 (a,b)=>
 
 a+
-
-Number(b.cantidad),
+Number(
+b.cantidad||0
+),
 
 0
 
 );
 
-const ticket=
-
-data.length
-
-?
-
-(total/data.length)
-
-:0;
-
-
-document.getElementById(
+document
+.getElementById(
 "totalVentas"
-).textContent=
+)
+.textContent=
 
 "$"+
 
 total.toFixed(2);
 
-
-document.getElementById(
+document
+.getElementById(
 "productosVendidos"
-).textContent=
+)
+.textContent=
 
 vendidos;
 
-
-document.getElementById(
-"ticketPromedio"
-).textContent=
-
-"$"+
-
-ticket.toFixed(2);
-
-
-document.getElementById(
+document
+.getElementById(
 "inventarioActual"
-).textContent=
+)
+.textContent=
 
 productos.reduce(
 
 (a,b)=>
 
 a+
-
-Number(b.stock),
+Number(
+b.stock||0
+),
 
 0
 
 );
 
 }
-
 
 function renderVentas(data){
 
@@ -315,41 +332,38 @@ document.getElementById(
 "tablaVentas"
 );
 
-tabla.innerHTML="";
+if(!tabla)return;
 
+tabla.innerHTML="";
 
 data.forEach(v=>{
 
-tabla.innerHTML+=`
+tabla.innerHTML += `
 
 <tr>
 
 <td>
-${v.fechaVenta}
+${v.fechaVenta||""}
 </td>
 
 <td>
-${v.nombreProducto}
+${v.nombreProducto||""}
 </td>
 
 <td>
-${v.emprendimiento}
+${v.emprendimiento||""}
 </td>
 
 <td>
-${v.vendedorNombre}
+${v.vendedorNombre||""}
 </td>
 
 <td>
-${v.canalVenta}
+${v.cantidad||0}
 </td>
 
 <td>
-${v.cantidad}
-</td>
-
-<td>
-$${v.total}
+$${v.total||0}
 </td>
 
 </tr>
@@ -360,7 +374,6 @@ $${v.total}
 
 }
 
-
 function renderInventario(emp){
 
 const tabla=
@@ -368,16 +381,15 @@ document.getElementById(
 "tablaInventario"
 );
 
-tabla.innerHTML="";
+if(!tabla)return;
 
+tabla.innerHTML="";
 
 productos
 
 .filter(p=>
 
-!emp
-
-||
+!emp ||
 
 p.emprendedora===emp
 
@@ -390,21 +402,19 @@ tabla.innerHTML+=`
 <tr>
 
 <td>
-
 ${p.nombreProducto}
-
 </td>
 
 <td>
-
 ${p.emprendedora}
-
 </td>
 
 <td>
-
 ${p.stock}
+</td>
 
+<td>
+${p.estadoProducto}
 </td>
 
 </tr>
@@ -415,33 +425,38 @@ ${p.stock}
 
 }
 
-
 function renderTopProductos(data){
-
-const top={};
-
-data.forEach(v=>{
-
-top[v.nombreProducto]=
-
-(top[v.nombreProducto]||0)
-
-+
-
-Number(v.cantidad);
-
-});
-
 
 const tabla=
 document.getElementById(
 "tablaTopProductos"
 );
 
+if(!tabla)return;
+
 tabla.innerHTML="";
 
+const resumen={};
 
-Object.entries(top)
+data.forEach(v=>{
+
+const nombre=
+
+v.nombreProducto||
+
+"Sin nombre";
+
+resumen[nombre]=
+
+(resumen[nombre]||0)
+
++
+
+Number(v.cantidad||0);
+
+});
+
+Object.entries(resumen)
 
 .sort(
 
@@ -451,22 +466,18 @@ b[1]-a[1]
 
 )
 
-.forEach(p=>{
+.forEach(item=>{
 
-tabla.innerHTML+=`
+tabla.innerHTML +=`
 
 <tr>
 
 <td>
-
-${p[0]}
-
+${item[0]}
 </td>
 
 <td>
-
-${p[1]}
-
+${item[1]}
 </td>
 
 </tr>
@@ -477,8 +488,15 @@ ${p[1]}
 
 }
 
-
 function graficaGlobal(){
+
+const canvas=
+
+document.getElementById(
+"graficoGlobal"
+);
+
+if(!canvas)return;
 
 const resumen={};
 
@@ -486,12 +504,9 @@ ventas.forEach(v=>{
 
 const emp=
 
-v.emprendimiento
-
-||
+v.emprendimiento||
 
 "Sin nombre";
-
 
 resumen[emp]=
 
@@ -499,10 +514,9 @@ resumen[emp]=
 
 +
 
-Number(v.total);
+Number(v.total||0);
 
 });
-
 
 if(globalChart){
 
@@ -510,20 +524,16 @@ globalChart.destroy();
 
 }
 
-
 globalChart=
 
-new Chart(
-
-graficoGlobal,
-
-{
+new Chart(canvas,{
 
 type:"bar",
 
 data:{
 
 labels:
+
 Object.keys(
 resumen
 ),
@@ -531,9 +541,10 @@ resumen
 datasets:[{
 
 label:
-"Ventas Globales",
+"Ventas",
 
 data:
+
 Object.values(
 resumen
 )
@@ -542,29 +553,39 @@ resumen
 
 }
 
-}
-
-);
+});
 
 }
-
 
 function graficaFiltro(data){
+
+const canvas=
+
+document.getElementById(
+"graficoFiltro"
+);
+
+if(!canvas)return;
 
 const resumen={};
 
 data.forEach(v=>{
 
-resumen[v.nombreProducto]=
+const nombre=
 
-(resumen[v.nombreProducto]||0)
+v.nombreProducto||
+
+"Sin nombre";
+
+resumen[nombre]=
+
+(resumen[nombre]||0)
 
 +
 
-Number(v.total);
+Number(v.total||0);
 
 });
-
 
 if(filtroChart){
 
@@ -572,109 +593,46 @@ filtroChart.destroy();
 
 }
 
-
 filtroChart=
 
-new Chart(
-
-graficoFiltro,
-
-{
-
-type:"bar",
-
-data:{
-
-labels:
-Object.keys(
-resumen),
-
-datasets:[{
-
-label:
-"Productos",
-
-data:
-Object.values(
-resumen)
-
-}]
-
-}
-
-}
-
-);
-
-}
-
-
-function graficaCanal(data){
-
-const resumen={};
-
-data.forEach(v=>{
-
-resumen[v.canalVenta]=
-
-(resumen[v.canalVenta]||0)
-
-+
-
-Number(v.total);
-
-});
-
-
-if(canalChart){
-
-canalChart.destroy();
-
-}
-
-
-canalChart=
-
-new Chart(
-
-graficoCanal,
-
-{
+new Chart(canvas,{
 
 type:"pie",
 
 data:{
 
 labels:
+
 Object.keys(
-resumen),
+resumen
+),
 
 datasets:[{
 
 data:
+
 Object.values(
-resumen)
+resumen
+)
 
 }]
 
 }
 
-}
-
-);
+});
 
 }
-
 
 function generarPDF(){
 
-const{
+const {
 
 jsPDF
 
 }=window.jspdf;
 
 const pdf=
+
 new jsPDF();
 
 pdf.text(
@@ -683,28 +641,11 @@ pdf.text(
 20
 );
 
-pdf.text(
-
-"Total ventas: "+
-
-document
-.getElementById(
-"totalVentas"
-)
-.textContent,
-
-20,
-
-40
-
-);
-
 pdf.save(
 "Reporte.pdf"
 );
 
 }
-
 
 function logout(){
 
@@ -714,7 +655,6 @@ location.href=
 "index.html";
 
 }
-
 
 function volverPagina(){
 
