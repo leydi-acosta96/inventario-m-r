@@ -830,20 +830,329 @@ resumen)
 
 function generarPDF(){
 
-const pdf=
+const { jsPDF } = window.jspdf;
 
-new jspdf.jsPDF();
+const pdf =
+new jsPDF(
+"p",
+"mm",
+"a4"
+);
+
+let y = 20;
+
+
+// TITULO
+pdf.setFontSize(18);
 
 pdf.text(
-"Reporte",
+"Reporte del Sistema",
 20,
-20
+y
 );
+
+y += 12;
+
+
+// FILTROS
+
+pdf.setFontSize(10);
+
+pdf.text(
+
+"Fecha inicio: " +
+
+(
+document.getElementById(
+"fechaInicio"
+).value
+
+||
+
+"Todas"
+),
+
+20,
+y
+
+);
+
+y += 6;
+
+
+pdf.text(
+
+"Fecha fin: " +
+
+(
+document.getElementById(
+"fechaFin"
+).value
+
+||
+
+"Todas"
+),
+
+20,
+y
+
+);
+
+y += 6;
+
+
+pdf.text(
+
+"Emprendimiento: " +
+
+(
+document.getElementById(
+"filtroEmprendedora"
+).value
+
+||
+
+"Todos"
+),
+
+20,
+y
+
+);
+
+y += 6;
+
+
+pdf.text(
+
+"Persona: " +
+
+(
+document.getElementById(
+"filtroPersona"
+).value
+
+||
+
+"Todas"
+),
+
+20,
+y
+
+);
+
+y += 6;
+
+
+pdf.text(
+
+"Canal: " +
+
+(
+document.getElementById(
+"filtroCanal"
+).value
+
+||
+
+"Todos"
+),
+
+20,
+y
+
+);
+
+y += 10;
+
+
+// RESUMEN
+
+pdf.setFontSize(14);
+
+pdf.text(
+"Resumen",
+20,
+y
+);
+
+y += 8;
+
+pdf.setFontSize(10);
+
+pdf.text(
+
+"Total ventas: " +
+
+document.getElementById(
+"totalVentas"
+).textContent,
+
+20,
+y
+
+);
+
+y += 6;
+
+pdf.text(
+
+"Productos vendidos: " +
+
+document.getElementById(
+"productosVendidos"
+).textContent,
+
+20,
+y
+
+);
+
+y += 6;
+
+
+pdf.text(
+
+"Inventario actual: " +
+
+document.getElementById(
+"inventarioActual"
+).textContent,
+
+20,
+y
+
+);
+
+y += 6;
+
+
+pdf.text(
+
+"Ticket promedio: " +
+
+document.getElementById(
+"ticketPromedio"
+).textContent,
+
+20,
+y
+
+);
+
+y += 10;
+
+
+// TABLA VENTAS
+
+pdf.setFontSize(14);
+
+pdf.text(
+"Ventas",
+20,
+y
+);
+
+y += 8;
+
+
+pdf.setFontSize(9);
+
+const filas =
+
+document
+.querySelectorAll(
+"#tablaVentas tr"
+);
+
+
+filas.forEach(fila=>{
+
+const columnas=
+
+fila.querySelectorAll(
+"td"
+);
+
+
+if(
+
+columnas.length>0
+
+){
+
+const texto=
+
+Array.from(
+columnas
+)
+
+.map(c=>
+
+c.textContent
+
+)
+
+.join(" | ");
+
+
+pdf.text(
+
+texto,
+
+10,
+
+y
+
+);
+
+y += 6;
+
+
+if(y>270){
+
+pdf.addPage();
+
+y=20;
+
+}
+
+}
+
+});
+
+
+// PIE
+
+y += 10;
+
+pdf.setFontSize(8);
+
+pdf.text(
+
+"Generado: "
+
++
+
+new Date()
+.toLocaleString(),
+
+20,
+
+y
+
+);
+
 
 pdf.save(
+
 "Reporte.pdf"
+
 );
 
+}
 }
 
 
