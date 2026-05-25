@@ -10,367 +10,445 @@ const API_USUARIOS =
 let ventas = [];
 let productos = [];
 
-let globalChart;
-let filtroChart;
-let canalChart;
+let graficoGlobal;
+let graficoFiltro;
+let graficoCanal;
 
 document.addEventListener(
 "DOMContentLoaded",
-async()=>{
+async ()=>{
 
-await cargarDatos();
+    await cargarDatos();
 
-await cargarFiltros();
+    await cargarFiltros();
 
-generarReporte();
+    generarReporte();
 
-});
+}
+);
 
 async function cargarDatos(){
 
-try{
+    try{
 
-const ventasData =
-await fetch(API_VENTAS)
-.then(r=>r.json());
+        const ventasData =
+        await fetch(API_VENTAS)
+        .then(r=>r.json());
 
-ventas =
-ventasData.ventas || [];
+        ventas =
+        ventasData.ventas || [];
 
-const productosData =
-await fetch(API_PRODUCTOS)
-.then(r=>r.json());
+        const productosData =
+        await fetch(API_PRODUCTOS)
+        .then(r=>r.json());
 
-productos =
-productosData.productos || [];
+        productos =
+        productosData.productos || [];
 
-}catch(error){
+    }
 
-console.log(error);
+    catch(error){
 
-}
+        console.log(error);
+
+        alert(
+        "Error cargando datos"
+        );
+
+    }
 
 }
 
 async function cargarFiltros(){
 
-try{
+    try{
 
-const usuarios =
-(await fetch(API_USUARIOS)
-.then(r=>r.json()))
-.usuarios || [];
+        const usuariosData =
+        await fetch(API_USUARIOS)
+        .then(r=>r.json());
 
-const emp =
-document.getElementById(
-"filtroEmprendedora"
-);
+        const usuarios =
+        usuariosData.usuarios || [];
 
-const persona =
-document.getElementById(
-"filtroVendedora"
-);
+        const filtroEmp =
+        document.getElementById(
+        "filtroEmprendedora"
+        );
 
-if(emp){
+        const filtroPersona =
+        document.getElementById(
+        "filtroPersona"
+        );
 
-emp.innerHTML=`
+        const filtroCanal =
+        document.getElementById(
+        "filtroCanal"
+        );
 
-<option value="">
-Todas
-</option>
+        filtroEmp.innerHTML=
+        `<option value="">
+        Todas
+        </option>`;
 
-`;
+        filtroPersona.innerHTML=
+        `<option value="">
+        Todas las personas
+        </option>`;
 
-}
+        filtroCanal.innerHTML=
+        `<option value="">
+        Todos canales
+        </option>`;
 
-if(persona){
+        const emprendimientos =
+        [...new Set(
 
-persona.innerHTML=`
+        usuarios
 
-<option value="">
-Todas
-</option>
+        .filter(
+        u=>u.emprendimiento
+        )
 
-`;
+        .map(
+        u=>u.emprendimiento
+        )
 
-}
+        )];
 
-usuarios.forEach(u=>{
+        emprendimientos.forEach(e=>{
 
-if(
+            filtroEmp.innerHTML +=
+            `
 
-u.emprendimiento
+            <option value="${e}">
 
-&&
+            ${e}
 
-emp
+            </option>
 
-){
+            `;
 
-emp.innerHTML += `
+        });
 
-<option
-value="${u.emprendimiento}"
->
 
-${u.emprendimiento}
+        const personas=
+        [...new Set(
 
-</option>
+        usuarios
 
-`;
+        .filter(
 
-}
+        u=>
 
-if(
+        u.rol?.toLowerCase()
+        ==="vendedora"
 
-u.nombre
+        ||
 
-&&
+        u.rol?.toLowerCase()
+        ==="emprendedora"
 
-persona
+        )
 
-){
+        .map(
+        u=>u.nombre
+        )
 
-persona.innerHTML += `
+        )];
 
-<option
-value="${u.nombre}"
->
+        personas.forEach(p=>{
 
-${u.nombre}
+            filtroPersona.innerHTML+=
 
-</option>
+            `
 
-`;
+            <option value="${p}">
 
-}
+            ${p}
 
-});
+            </option>
 
-}catch(error){
+            `;
 
-console.log(
-"Error filtros",
-error
-);
+        });
 
-}
+
+        const canales=
+        [...new Set(
+
+        ventas
+
+        .filter(
+        v=>v.canalVenta
+        )
+
+        .map(
+        v=>v.canalVenta
+        )
+
+        )];
+
+        canales.forEach(c=>{
+
+            filtroCanal.innerHTML+=
+
+            `
+
+            <option value="${c}">
+
+            ${c}
+
+            </option>
+
+            `;
+
+        });
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+    }
 
 }
 
 function generarReporte(){
 
-const inicio =
-document
-.getElementById(
-"fechaInicio"
-)?.value || "";
+    const inicio=
+    document.getElementById(
+    "fechaInicio"
+    ).value;
 
-const fin =
-document
-.getElementById(
-"fechaFin"
-)?.value || "";
+    const fin=
+    document.getElementById(
+    "fechaFin"
+    ).value;
 
-const emp =
-document
-.getElementById(
-"filtroEmprendedora"
-)?.value || "";
+    const emprendimiento=
+    document.getElementById(
+    "filtroEmprendedora"
+    ).value;
 
-const persona =
-document
-.getElementById(
-"filtroVendedora"
-)?.value || "";
+    const persona=
+    document.getElementById(
+    "filtroPersona"
+    ).value;
 
-let filtradas =
+    const canal=
+    document.getElementById(
+    "filtroCanal"
+    ).value;
 
-ventas.filter(v=>{
 
-const emprendimiento =
+    let filtradas=
+    ventas.filter(v=>{
 
-v.emprendimiento ||
+        const fecha=
+        v.fechaVenta || "";
 
-v.emprendedora ||
+        return(
 
-"";
+        (!inicio ||
 
-const vendedor =
+        fecha>=inicio)
 
-v.vendedorNombre ||
+        &&
 
-"";
+        (!fin ||
 
-return(
+        fecha<=fin)
 
-(!inicio ||
+        &&
 
-v.fechaVenta >= inicio)
+        (!emprendimiento ||
 
-&&
+        v.emprendimiento===
+        emprendimiento)
 
-(!fin ||
+        &&
 
-v.fechaVenta <= fin)
+        (!persona ||
 
-&&
+        v.vendedorNombre===
+        persona)
 
-(!emp ||
+        &&
 
-emprendimiento === emp)
+        (!canal ||
 
-&&
+        v.canalVenta===
+        canal)
 
-(!persona ||
+        );
 
-vendedor === persona)
+    });
 
-);
+    actualizarCards(
+    filtradas
+    );
 
-});
+    renderVentas(
+    filtradas
+    );
 
-actualizarCards(
-filtradas
-);
+    renderInventario(
+    emprendimiento
+    );
 
-renderVentas(
-filtradas
-);
+    renderTopProductos(
+    filtradas
+    );
 
-renderInventario(
-emp
-);
+    crearGraficoGlobal();
 
-renderTopProductos(
-filtradas
-);
+    crearGraficoFiltro(
+    filtradas
+    );
 
-graficaGlobal();
-
-graficaFiltro(
-filtradas
-);
+    crearGraficoCanal(
+    filtradas
+    );
 
 }
 
 function actualizarCards(data){
 
-const total =
+    const total=
 
-data.reduce(
+    data.reduce(
 
-(a,b)=>
+    (a,b)=>
 
-a+
-Number(
-b.total||0
-),
+    a+
 
-0
+    Number(
+    b.total||0
+    ),
 
-);
+    0
 
-const vendidos =
+    );
 
-data.reduce(
+    const productos=
 
-(a,b)=>
+    data.reduce(
 
-a+
-Number(
-b.cantidad||0
-),
+    (a,b)=>
 
-0
+    a+
 
-);
+    Number(
+    b.cantidad||0
+    ),
 
-document
-.getElementById(
-"totalVentas"
-)
-.textContent=
+    0
 
-"$"+
+    );
 
-total.toFixed(2);
+    const ticket=
 
-document
-.getElementById(
-"productosVendidos"
-)
-.textContent=
+    data.length
 
-vendidos;
+    ?
 
-document
-.getElementById(
-"inventarioActual"
-)
-.textContent=
+    total/data.length
 
-productos.reduce(
+    :
 
-(a,b)=>
+    0;
 
-a+
-Number(
-b.stock||0
-),
+    document
+    .getElementById(
+    "totalVentas"
+    )
+    .textContent=
 
-0
+    "$"+
 
-);
+    total.toFixed(2);
+
+    document
+    .getElementById(
+    "productosVendidos"
+    )
+    .textContent=
+
+    productos;
+
+    document
+    .getElementById(
+    "ticketPromedio"
+    )
+    .textContent=
+
+    "$"+
+
+    ticket.toFixed(2);
+
+    document
+    .getElementById(
+    "inventarioActual"
+    )
+    .textContent=
+
+    productosGlobal();
+
+}
+
+function productosGlobal(){
+
+    return productos.reduce(
+
+    (a,b)=>
+
+    a+
+
+    Number(
+    b.stock||0
+    ),
+
+    0
+
+    );
 
 }
 
 function renderVentas(data){
 
-const tabla=
-document.getElementById(
-"tablaVentas"
-);
+    const tabla=
+    document.getElementById(
+    "tablaVentas"
+    );
 
-if(!tabla)return;
+    tabla.innerHTML="";
 
-tabla.innerHTML="";
+    data.forEach(v=>{
 
-data.forEach(v=>{
+        tabla.innerHTML+=`
 
-tabla.innerHTML += `
+        <tr>
 
-<tr>
+        <td>${v.fechaVenta}</td>
 
-<td>
-${v.fechaVenta||""}
-</td>
+        <td>${v.nombreProducto}</td>
 
-<td>
-${v.nombreProducto||""}
-</td>
+        <td>${v.emprendimiento}</td>
 
-<td>
-${v.emprendimiento||""}
-</td>
+        <td>${v.vendedorNombre}</td>
 
-<td>
-${v.vendedorNombre||""}
-</td>
+        <td>${v.canalVenta}</td>
 
-<td>
-${v.cantidad||0}
-</td>
+        <td>${v.cantidad}</td>
 
-<td>
-$${v.total||0}
-</td>
+        <td>$${v.total}</td>
 
-</tr>
+        </tr>
 
-`;
+        `;
 
-});
+    });
 
 }
 
@@ -381,15 +459,17 @@ document.getElementById(
 "tablaInventario"
 );
 
-if(!tabla)return;
-
 tabla.innerHTML="";
 
 productos
 
-.filter(p=>
+.filter(
 
-!emp ||
+p=>
+
+!emp
+
+||
 
 p.emprendedora===emp
 
@@ -402,19 +482,21 @@ tabla.innerHTML+=`
 <tr>
 
 <td>
+
 ${p.nombreProducto}
+
 </td>
 
 <td>
+
 ${p.emprendedora}
+
 </td>
 
 <td>
+
 ${p.stock}
-</td>
 
-<td>
-${p.estadoProducto}
 </td>
 
 </tr>
@@ -427,58 +509,40 @@ ${p.estadoProducto}
 
 function renderTopProductos(data){
 
+const top={};
+
+data.forEach(v=>{
+
+top[v.nombreProducto]=
+
+(top[v.nombreProducto]||0)
+
++
+
+Number(v.cantidad);
+
+});
+
 const tabla=
 document.getElementById(
 "tablaTopProductos"
 );
 
-if(!tabla)return;
-
 tabla.innerHTML="";
 
-const resumen={};
+Object.entries(top)
 
-data.forEach(v=>{
+.sort((a,b)=>b[1]-a[1])
 
-const nombre=
+.forEach(p=>{
 
-v.nombreProducto||
-
-"Sin nombre";
-
-resumen[nombre]=
-
-(resumen[nombre]||0)
-
-+
-
-Number(v.cantidad||0);
-
-});
-
-Object.entries(resumen)
-
-.sort(
-
-(a,b)=>
-
-b[1]-a[1]
-
-)
-
-.forEach(item=>{
-
-tabla.innerHTML +=`
+tabla.innerHTML+=`
 
 <tr>
 
-<td>
-${item[0]}
-</td>
+<td>${p[0]}</td>
 
-<td>
-${item[1]}
-</td>
+<td>${p[1]}</td>
 
 </tr>
 
@@ -488,25 +552,20 @@ ${item[1]}
 
 }
 
-function graficaGlobal(){
+function crearGraficoGlobal(){
 
-const canvas=
+if(graficoGlobal){
 
-document.getElementById(
-"graficoGlobal"
-);
+graficoGlobal.destroy();
 
-if(!canvas)return;
+}
 
 const resumen={};
 
 ventas.forEach(v=>{
 
 const emp=
-
-v.emprendimiento||
-
-"Sin nombre";
+v.emprendimiento;
 
 resumen[emp]=
 
@@ -514,26 +573,25 @@ resumen[emp]=
 
 +
 
-Number(v.total||0);
+Number(v.total);
 
 });
 
-if(globalChart){
+graficoGlobal=
 
-globalChart.destroy();
+new Chart(
 
-}
+document.getElementById(
+"graficoGlobal"
+),
 
-globalChart=
-
-new Chart(canvas,{
+{
 
 type:"bar",
 
 data:{
 
 labels:
-
 Object.keys(
 resumen
 ),
@@ -541,10 +599,9 @@ resumen
 datasets:[{
 
 label:
-"Ventas",
+"Ventas Globales",
 
 data:
-
 Object.values(
 resumen
 )
@@ -553,56 +610,114 @@ resumen
 
 }
 
-});
+}
+
+);
 
 }
 
-function graficaFiltro(data){
+function crearGraficoFiltro(data){
 
-const canvas=
+if(graficoFiltro){
 
-document.getElementById(
-"graficoFiltro"
-);
+graficoFiltro.destroy();
 
-if(!canvas)return;
+}
 
 const resumen={};
 
 data.forEach(v=>{
 
-const nombre=
+resumen[v.nombreProducto]=
 
-v.nombreProducto||
-
-"Sin nombre";
-
-resumen[nombre]=
-
-(resumen[nombre]||0)
+(resumen[v.nombreProducto]||0)
 
 +
 
-Number(v.total||0);
+Number(v.total);
 
 });
 
-if(filtroChart){
+graficoFiltro=
 
-filtroChart.destroy();
+new Chart(
+
+document.getElementById(
+"graficoFiltro"
+),
+
+{
+
+type:"bar",
+
+data:{
+
+labels:
+Object.keys(
+resumen
+),
+
+datasets:[{
+
+label:
+"Ventas Filtradas",
+
+data:
+Object.values(
+resumen
+)
+
+}]
 
 }
 
-filtroChart=
+}
 
-new Chart(canvas,{
+);
+
+}
+
+function crearGraficoCanal(data){
+
+if(graficoCanal){
+
+graficoCanal.destroy();
+
+}
+
+const resumen={};
+
+data.forEach(v=>{
+
+const canal=
+v.canalVenta||
+"Sin canal";
+
+resumen[canal]=
+
+(resumen[canal]||0)
+
++
+
+Number(v.total);
+
+});
+
+graficoCanal=
+
+new Chart(
+
+document.getElementById(
+"graficoCanal"
+),
+
+{
 
 type:"pie",
 
 data:{
 
 labels:
-
 Object.keys(
 resumen
 ),
@@ -610,7 +725,6 @@ resumen
 datasets:[{
 
 data:
-
 Object.values(
 resumen
 )
@@ -619,45 +733,8 @@ resumen
 
 }
 
-});
-
 }
 
-function generarPDF(){
-
-const {
-
-jsPDF
-
-}=window.jspdf;
-
-const pdf=
-
-new jsPDF();
-
-pdf.text(
-"Reporte",
-20,
-20
 );
-
-pdf.save(
-"Reporte.pdf"
-);
-
-}
-
-function logout(){
-
-sessionStorage.clear();
-
-location.href=
-"index.html";
-
-}
-
-function volverPagina(){
-
-history.back();
 
 }
