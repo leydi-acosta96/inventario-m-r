@@ -1426,8 +1426,6 @@ pdf.save(
 );
 
 }
-
-}
 function logout(){
 
 sessionStorage.clear();
