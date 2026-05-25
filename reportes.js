@@ -344,8 +344,6 @@ filtradas
 );
 
 }
-}
-
 
 function actualizarResumen(data){
 
