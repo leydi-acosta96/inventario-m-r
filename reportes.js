@@ -1153,8 +1153,6 @@ pdf.save(
 );
 
 }
-}
-
 
 function logout(){
 
