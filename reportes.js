@@ -830,7 +830,8 @@ resumen)
 
 function generarPDF(){
 
-const { jsPDF } = window.jspdf;
+const { jsPDF } =
+window.jspdf;
 
 const pdf =
 new jsPDF(
@@ -839,318 +840,592 @@ new jsPDF(
 "a4"
 );
 
-let y = 20;
+const fecha=
+new Date()
+.toLocaleString();
 
 
 // TITULO
+
 pdf.setFontSize(18);
 
 pdf.text(
 "Reporte del Sistema",
-20,
-y
+15,
+15
 );
 
-y += 12;
+pdf.setFontSize(9);
+
+pdf.text(
+"Generado: "+fecha,
+15,
+22
+);
 
 
 // FILTROS
 
+pdf.setFontSize(12);
+
+pdf.text(
+"Filtros aplicados",
+15,
+32
+);
+
+
 pdf.setFontSize(10);
 
 pdf.text(
 
-"Fecha inicio: " +
+"Fecha inicio: "+
 
 (
-document.getElementById(
+document
+.getElementById(
 "fechaInicio"
-).value
+)
+.value
 
 ||
 
 "Todas"
+
 ),
 
-20,
-y
+15,
+
+40
 
 );
-
-y += 6;
 
 
 pdf.text(
 
-"Fecha fin: " +
+"Fecha fin: "+
 
 (
-document.getElementById(
+document
+.getElementById(
 "fechaFin"
-).value
+)
+.value
 
 ||
 
 "Todas"
+
 ),
 
-20,
-y
+15,
+
+46
 
 );
-
-y += 6;
 
 
 pdf.text(
 
-"Emprendimiento: " +
+"Emprendimiento: "+
 
 (
-document.getElementById(
+document
+.getElementById(
 "filtroEmprendedora"
-).value
+)
+.value
 
 ||
 
 "Todos"
+
 ),
 
-20,
-y
+15,
+
+52
 
 );
-
-y += 6;
 
 
 pdf.text(
 
-"Persona: " +
+"Persona: "+
 
 (
-document.getElementById(
+document
+.getElementById(
 "filtroPersona"
-).value
+)
+.value
 
 ||
 
 "Todas"
+
 ),
 
-20,
-y
+15,
+
+58
 
 );
-
-y += 6;
 
 
 pdf.text(
 
-"Canal: " +
+"Canal: "+
 
 (
-document.getElementById(
+document
+.getElementById(
 "filtroCanal"
-).value
+)
+.value
 
 ||
 
 "Todos"
+
 ),
 
-20,
-y
+15,
+
+64
 
 );
-
-y += 10;
 
 
 // RESUMEN
 
-pdf.setFontSize(14);
+pdf.setFontSize(12);
 
 pdf.text(
 "Resumen",
-20,
-y
+15,
+75
 );
 
-y += 8;
 
-pdf.setFontSize(10);
+pdf.autoTable({
 
-pdf.text(
+startY:80,
 
-"Total ventas: " +
+head:[[
+"Total Ventas",
+"Productos",
+"Inventario",
+"Ticket"
+]],
 
-document.getElementById(
+body:[[
+document
+.getElementById(
 "totalVentas"
-).textContent,
+)
+.textContent,
 
-20,
-y
-
-);
-
-y += 6;
-
-pdf.text(
-
-"Productos vendidos: " +
-
-document.getElementById(
+document
+.getElementById(
 "productosVendidos"
-).textContent,
+)
+.textContent,
 
-20,
-y
-
-);
-
-y += 6;
-
-
-pdf.text(
-
-"Inventario actual: " +
-
-document.getElementById(
+document
+.getElementById(
 "inventarioActual"
-).textContent,
+)
+.textContent,
 
-20,
-y
-
-);
-
-y += 6;
-
-
-pdf.text(
-
-"Ticket promedio: " +
-
-document.getElementById(
+document
+.getElementById(
 "ticketPromedio"
-).textContent,
+)
+.textContent
 
-20,
-y
+]]
 
-);
+});
 
-y += 10;
+
+let y=
+pdf.lastAutoTable
+.finalY+10;
 
 
 // TABLA VENTAS
 
-pdf.setFontSize(14);
-
-pdf.text(
-"Ventas",
-20,
-y
-);
-
-y += 8;
-
-
-pdf.setFontSize(9);
-
-const filas =
+const ventas=[];
 
 document
 .querySelectorAll(
 "#tablaVentas tr"
-);
+)
+.forEach(f=>{
 
+const fila=[];
 
-filas.forEach(fila=>{
-
-const columnas=
-
-fila.querySelectorAll(
+f.querySelectorAll(
 "td"
+)
+.forEach(td=>{
+
+fila.push(
+td.innerText
 );
 
+});
 
 if(
-
-columnas.length>0
-
+fila.length
 ){
 
-const texto=
-
-Array.from(
-columnas
-)
-
-.map(c=>
-
-c.textContent
-
-)
-
-.join(" | ");
-
-
-pdf.text(
-
-texto,
-
-10,
-
-y
-
+ventas.push(
+fila
 );
-
-y += 6;
-
-
-if(y>270){
-
-pdf.addPage();
-
-y=20;
-
-}
 
 }
 
 });
 
 
+pdf.text(
+"Detalle Ventas",
+15,
+y
+);
+
+
+pdf.autoTable({
+
+startY:
+y+5,
+
+head:[[
+
+"Fecha",
+"Producto",
+"Emprendimiento",
+"Persona",
+"Canal",
+"Cantidad",
+"Total"
+
+]],
+
+body:
+ventas,
+
+styles:{
+fontSize:8
+}
+
+});
+
+
+y=
+pdf.lastAutoTable
+.finalY+10;
+
+
+// PRODUCTOS MAS VENDIDOS
+
+const top=[];
+
+document
+.querySelectorAll(
+"#tablaTopProductos tr"
+)
+.forEach(f=>{
+
+const fila=[];
+
+f.querySelectorAll(
+"td"
+)
+.forEach(td=>{
+
+fila.push(
+td.innerText
+);
+
+});
+
+if(
+fila.length
+){
+
+top.push(
+fila
+);
+
+}
+
+});
+
+
+pdf.text(
+"Productos Mas Vendidos",
+15,
+y
+);
+
+
+pdf.autoTable({
+
+startY:
+y+5,
+
+head:[[
+
+"Producto",
+"Cantidad"
+
+]],
+
+body:
+top
+
+});
+
+
+y=
+pdf.lastAutoTable
+.finalY+10;
+
+
+// INVENTARIO
+
+const inventario=[];
+
+document
+.querySelectorAll(
+"#tablaInventario tr"
+)
+.forEach(f=>{
+
+const fila=[];
+
+f.querySelectorAll(
+"td"
+)
+.forEach(td=>{
+
+fila.push(
+td.innerText
+);
+
+});
+
+if(
+fila.length
+){
+
+inventario.push(
+fila
+);
+
+}
+
+});
+
+
+pdf.text(
+"Inventario",
+15,
+y
+);
+
+
+pdf.autoTable({
+
+startY:
+y+5,
+
+head:[[
+
+"Producto",
+"Emprendimiento",
+"Stock"
+
+]],
+
+body:
+inventario,
+
+styles:{
+fontSize:8
+}
+
+});
+
+
+y=
+pdf.lastAutoTable
+.finalY+15;
+
+
+// GRAFICAS
+
+const global=
+
+document
+.getElementById(
+"graficoGlobal"
+);
+
+const filtro=
+
+document
+.getElementById(
+"graficoFiltro"
+);
+
+const canal=
+
+document
+.getElementById(
+"graficoCanal"
+);
+
+
+if(
+global
+){
+
+pdf.addPage();
+
+pdf.text(
+"Ventas Globales",
+15,
+15
+);
+
+pdf.addImage(
+
+global.toDataURL(),
+
+"PNG",
+
+15,
+
+25,
+
+180,
+
+80
+
+);
+
+}
+
+
+if(
+filtro
+){
+
+pdf.text(
+
+"Productos Filtrados",
+
+15,
+
+120
+
+);
+
+pdf.addImage(
+
+filtro.toDataURL(),
+
+"PNG",
+
+15,
+
+130,
+
+180,
+
+70
+
+);
+
+}
+
+
+if(
+canal
+){
+
+pdf.addPage();
+
+pdf.text(
+"Canal de Venta",
+15,
+20
+);
+
+pdf.addImage(
+
+canal.toDataURL(),
+
+"PNG",
+
+20,
+
+30,
+
+160,
+
+100
+
+);
+
+}
+
+
 // PIE
 
-y += 10;
+const paginas=
+
+pdf.internal
+.getNumberOfPages();
+
+
+for(
+let i=1;
+i<=paginas;
+i++
+){
+
+pdf.setPage(i);
 
 pdf.setFontSize(8);
 
 pdf.text(
 
-"Generado: "
+"Pagina "
 
-+
++i+
 
-new Date()
-.toLocaleString(),
+" de "
 
-20,
++paginas,
 
-y
+170,
+
+290
 
 );
 
+}
 
 pdf.save(
-
-"Reporte.pdf"
-
+"ReporteSistema.pdf"
 );
+
+}
 
 }
 function logout(){
