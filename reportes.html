@@ -13,10 +13,12 @@ content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="styles.css">
 
+<!-- Chart -->
 <script
 src="https://cdn.jsdelivr.net/npm/chart.js">
 </script>
 
+<!-- PDF -->
 <script
 src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
 </script>
@@ -25,16 +27,20 @@ src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
 
 <body>
 
+<!-- BOTONES SUPERIORES -->
+
 <div class="acciones-superior">
 
-<button onclick="volverPagina()"
+<button
+onclick="volverPagina()"
 class="btn-top volver">
 
 ← Volver
 
 </button>
 
-<button onclick="logout()"
+<button
+onclick="logout()"
 class="btn-top cerrar">
 
 Cerrar sesión
@@ -44,54 +50,103 @@ Cerrar sesión
 </div>
 
 
-<h1>Reportes del Sistema</h1>
+<h1>
 
+Reportes del Sistema
+
+</h1>
+
+
+<!-- FILTROS -->
 
 <div class="filtros">
 
-<label>Fecha inicio</label>
+<label>
+
+Fecha inicio
+
+</label>
 
 <input
 type="date"
 id="fechaInicio">
 
 
-<label>Fecha fin</label>
+<label>
+
+Fecha fin
+
+</label>
 
 <input
 type="date"
 id="fechaFin">
 
 
-<label>Emprendedora</label>
+<label>
 
-<select id="filtroEmprendedora">
+Emprendimiento
+
+</label>
+
+<select
+id="filtroEmprendedora">
 
 <option value="">
-Todas
+
+Todos
+
 </option>
 
 </select>
 
 
-<select id="filtroPersona">
-  
+<label>
+
+Persona
+
+</label>
+
+<select
+id="filtroPersona">
+
 <option value="">
-Todas
+
+Todas las personas
+
 </option>
-</select>
 
 </select>
 
 
-<button onclick="generarReporte()">
+<label>
+
+Canal venta
+
+</label>
+
+<select
+id="filtroCanal">
+
+<option value="">
+
+Todos los canales
+
+</option>
+
+</select>
+
+
+<button
+onclick="generarReporte()">
 
 Generar Reporte
 
 </button>
 
 
-<button onclick="generarPDF()">
+<button
+onclick="generarPDF()">
 
 Exportar PDF
 
@@ -100,17 +155,28 @@ Exportar PDF
 </div>
 
 
-<h2>Resumen</h2>
+<!-- RESUMEN -->
+
+<h2>
+
+Resumen
+
+</h2>
 
 <div class="cards">
 
+
 <div class="card">
 
-<h3>Total Ventas</h3>
+<h3>
+
+Total Ventas
+
+</h3>
 
 <p id="totalVentas">
 
-0
+$0
 
 </p>
 
@@ -119,7 +185,11 @@ Exportar PDF
 
 <div class="card">
 
-<h3>Productos Vendidos</h3>
+<h3>
+
+Productos Vendidos
+
+</h3>
 
 <p id="productosVendidos">
 
@@ -132,7 +202,11 @@ Exportar PDF
 
 <div class="card">
 
-<h3>Inventario Actual</h3>
+<h3>
+
+Inventario Actual
+
+</h3>
 
 <p id="inventarioActual">
 
@@ -142,10 +216,33 @@ Exportar PDF
 
 </div>
 
+
+<div class="card">
+
+<h3>
+
+Ticket Promedio
+
+</h3>
+
+<p id="ticketPromedio">
+
+$0
+
+</p>
+
+</div>
+
 </div>
 
 
-<h2>Ventas</h2>
+<!-- TABLA VENTAS -->
+
+<h2>
+
+Ventas
+
+</h2>
 
 <table>
 
@@ -153,30 +250,67 @@ Exportar PDF
 
 <tr>
 
-<th>Fecha</th>
+<th>
 
-<th>Producto</th>
+Fecha
 
-<th>Emprendimiento</th>
+</th>
 
-<th>Vendedora</th>
+<th>
 
-<th>Cantidad</th>
+Producto
 
-<th>Total</th>
+</th>
+
+<th>
+
+Emprendimiento
+
+</th>
+
+<th>
+
+Persona
+
+</th>
+
+<th>
+
+Canal
+
+</th>
+
+<th>
+
+Cantidad
+
+</th>
+
+<th>
+
+Total
+
+</th>
 
 </tr>
 
 </thead>
 
-<tbody id="tablaVentas">
+<tbody
+id="tablaVentas">
 
 </tbody>
 
 </table>
 
 
-<h2>Inventario</h2>
+<!-- TOP PRODUCTOS -->
+
+<h2>
+
+Productos más vendidos
+
+</h2>
 
 <table>
 
@@ -184,42 +318,134 @@ Exportar PDF
 
 <tr>
 
-<th>Producto</th>
+<th>
 
-<th>Emprendimiento</th>
+Producto
 
-<th>Stock</th>
+</th>
 
-<th>Estado</th>
+<th>
+
+Cantidad
+
+</th>
 
 </tr>
 
 </thead>
 
-<tbody id="tablaInventario">
+<tbody
+id="tablaTopProductos">
 
 </tbody>
 
 </table>
 
 
-<h2>Ventas por Emprendimiento</h2>
+<!-- INVENTARIO -->
+
+<h2>
+
+Inventario
+
+</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+
+Producto
+
+</th>
+
+<th>
+
+Emprendimiento
+
+</th>
+
+<th>
+
+Stock
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody
+id="tablaInventario">
+
+</tbody>
+
+</table>
+
+
+<!-- GRAFICAS -->
+
+<h2>
+
+Ventas Globales
+
+</h2>
 
 <canvas
-id="graficoVentas">
+id="graficoGlobal">
 
 </canvas>
 
 
-<script src="auth.js"></script>
+<h2>
 
-<script>
+Ventas Filtradas
 
-validarRol(["admin"]);
+</h2>
+
+<canvas
+id="graficoFiltro">
+
+</canvas>
+
+
+<h2>
+
+Canales de Venta
+
+</h2>
+
+<canvas
+id="graficoCanal">
+
+</canvas>
+
+
+<!-- SEGURIDAD -->
+
+<script
+src="auth.js">
 
 </script>
 
-<script src="reportes.js"></script>
+<script>
+
+validarRol(
+["admin"]
+);
+
+</script>
+
+
+<!-- REPORTES -->
+
+<script
+src="reportes.js">
+
+</script>
 
 </body>
 
