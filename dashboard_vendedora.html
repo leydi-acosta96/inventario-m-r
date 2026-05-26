@@ -10,97 +10,134 @@ content="width=device-width, initial-scale=1.0">
 
 <title>Dashboard Vendedora</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet"
+href="styles.css">
 
 </head>
 
 <body>
 
-
-<!-- HEADER -->
-
 <div class="header-dashboard">
 
-    <h1>Panel de Vendedora</h1>
+<h1>Panel de Vendedora</h1>
 
-    <div class="header-buttons">
+<div class="header-buttons">
 
-        <button
-        onclick="volver()"
-        class="btn-volver">
+<button
+onclick="volver()"
+class="btn-volver">
 
-        ← Volver
+← Volver
 
-        </button>
+</button>
 
+<button
+onclick="cerrarSesion()"
+class="btn-logout">
 
-        <button
-        onclick="cerrarSesion()"
-        class="btn-logout">
+Cerrar sesión
 
-        Cerrar sesión
-
-        </button>
-
-    </div>
+</button>
 
 </div>
 
+</div>
 
-
-<!-- CONTENIDO -->
 
 <div class="dashboard-grid">
 
+<div
+class="dashboard-card"
 
-    <!-- REGISTRAR VENTAS -->
+onclick="location.href='ventas.html'">
 
-    <div class="dashboard-card"
-    onclick="location.href='ventas.html'">
+<h3>Registrar Venta</h3>
 
-        <h3>Registrar Venta</h3>
-
-        <p>
-        Registrar ventas de productos
-        </p>
-
-    </div>
-
-
-
-    <!-- PRODUCTOS -->
-
-    <div class="dashboard-card"
-    onclick="location.href='productos.html'">
-
-        <h3>Inventario</h3>
-
-        <p>
-        Consultar productos disponibles
-        </p>
-
-    </div>
-
-
-
-    <!-- MIS VENTAS -->
-
-    <div class="dashboard-card"
-    onclick="location.href='mis_ventas.html'">
-
-        <h3>Mis Ventas</h3>
-
-        <p>
-        Ver historial de ventas realizadas
-        </p>
-
-    </div>
-
+<p>
+Registrar ventas
+</p>
 
 </div>
 
 
-<script src="dashboard_vendedora.js"></script>
+<div
+class="dashboard-card"
+
+onclick="location.href='productos_vendedora.html'">
+
+<h3>Inventario</h3>
+
+<p>
+Consultar productos
+</p>
+
+</div>
+
+
+<div
+class="dashboard-card"
+
+onclick="mostrarMisVentas()">
+
+<h3>Mis Ventas</h3>
+
+<p>
+Ver historial
+</p>
+
+</div>
+
+</div>
+
+
+<div
+id="panelVentas"
+
+class="panel-ventas"
+
+style="display:none;">
+
+<h2>
+
+Historial de Ventas
+
+</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Fecha</th>
+
+<th>Producto</th>
+
+<th>Emprendimiento</th>
+
+<th>Cantidad</th>
+
+<th>Canal</th>
+
+<th>Total</th>
+
+</tr>
+
+</thead>
+
+<tbody
+id="tablaMisVentas">
+
+</tbody>
+
+</table>
+
+</div>
+
+<script src="dashboard_vendedora.js">
+
+</script>
 
 </body>
+
 </html>
