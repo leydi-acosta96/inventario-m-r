@@ -741,7 +741,7 @@ width:100%;
 }
 
 }
-/* CONTENEDOR DE GRÁFICAS */
+/* CONTENEDOR GRAFICAS */
 
 .grafico-container{
 
@@ -751,11 +751,11 @@ padding:20px;
 
 border-radius:15px;
 
-box-shadow:0 2px 8px rgba(0,0,0,0.08);
+box-shadow:0 2px 8px rgba(0,0,0,.08);
 
 margin-top:25px;
 
-height:350px;
+height:340px;
 
 max-width:900px;
 
@@ -785,9 +785,7 @@ height:100% !important;
 
 .grafico-container{
 
-height:280px;
-
-padding:15px;
+height:270px;
 
 }
 
