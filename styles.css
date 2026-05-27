@@ -741,3 +741,69 @@ width:100%;
 }
 
 }
+/* CONTENEDOR DE GRÁFICAS */
+
+.grafico-container{
+
+background:white;
+
+padding:20px;
+
+border-radius:15px;
+
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
+
+margin-top:25px;
+
+height:350px;
+
+max-width:900px;
+
+margin-left:auto;
+
+margin-right:auto;
+
+position:relative;
+
+}
+
+
+/* CANVAS */
+
+.grafico-container canvas{
+
+width:100% !important;
+
+height:100% !important;
+
+}
+
+
+/* TABLET */
+
+@media(max-width:768px){
+
+.grafico-container{
+
+height:280px;
+
+padding:15px;
+
+}
+
+}
+
+
+/* CELULAR */
+
+@media(max-width:480px){
+
+.grafico-container{
+
+height:220px;
+
+padding:10px;
+
+}
+
+}
