@@ -601,7 +601,7 @@ options:{
 
 responsive:true,
 
-maintainAspectRatio:false,
+maintainAspectRatio:true,
 
 plugins:{
 
@@ -680,7 +680,7 @@ options:{
 
 responsive:true,
 
-maintainAspectRatio:false,
+maintainAspectRatio:true,
 
 plugins:{
 
@@ -760,7 +760,7 @@ options:{
 
 responsive:true,
 
-maintainAspectRatio:false,
+maintainAspectRatio:true,
 
 plugins:{
 
