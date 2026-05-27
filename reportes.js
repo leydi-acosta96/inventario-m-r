@@ -35,28 +35,20 @@ async function cargarDatos(){
 
 try{
 
-const dataVentas=
-await fetch(API_VENTAS)
-.then(r=>r.json());
-
 ventas=
-dataVentas.ventas||[];
-
-
-const dataProductos=
-await fetch(API_PRODUCTOS)
-.then(r=>r.json());
+(await fetch(API_VENTAS)
+.then(r=>r.json()))
+.ventas||[];
 
 productos=
-dataProductos.productos||[];
-
-
-const dataUsuarios=
-await fetch(API_USUARIOS)
-.then(r=>r.json());
+(await fetch(API_PRODUCTOS)
+.then(r=>r.json()))
+.productos||[];
 
 usuarios=
-dataUsuarios.usuarios||[];
+(await fetch(API_USUARIOS)
+.then(r=>r.json()))
+.usuarios||[];
 
 }
 catch(error){
@@ -87,26 +79,19 @@ document.getElementById(
 
 
 emp.innerHTML=
-`<option value="">
-Todos
-</option>`;
+`<option value="">Todos</option>`;
 
 persona.innerHTML=
-`<option value="">
-Todas las personas
-</option>`;
+`<option value="">Todas las personas</option>`;
 
 canal.innerHTML=
-`
-<option value="">
-Todos canales
-</option>
-`;
+`<option value="">Todos canales</option>`;
 
 
 const emprendimientos=
 
 [
+
 ...new Set(
 
 productos.map(
@@ -124,11 +109,7 @@ if(e){
 
 emp.innerHTML+=
 
-`<option>
-
-${e}
-
-</option>`;
+`<option>${e}</option>`;
 
 }
 
@@ -138,6 +119,7 @@ ${e}
 const personas=
 
 [
+
 ...new Set(
 
 usuarios.map(
@@ -155,11 +137,7 @@ if(p){
 
 persona.innerHTML+=
 
-`<option>
-
-${p}
-
-</option>`;
+`<option>${p}</option>`;
 
 }
 
@@ -169,6 +147,7 @@ ${p}
 const canales=
 
 [
+
 ...new Set(
 
 ventas.map(
@@ -186,11 +165,7 @@ if(c){
 
 canal.innerHTML+=
 
-`<option>
-
-${c}
-
-</option>`;
+`<option>${c}</option>`;
 
 }
 
@@ -259,7 +234,6 @@ return{
 nombreProducto:
 
 producto.nombreProducto
-
 ||
 
 "Sin producto",
@@ -268,7 +242,6 @@ producto.nombreProducto
 emprendimiento:
 
 producto.emprendedora
-
 ||
 
 "Sin emprendimiento"
@@ -285,31 +258,26 @@ ventasCompletas.filter(v=>{
 return(
 
 (!inicio||
-
 v.fechaVenta>=inicio)
 
 &&
 
 (!fin||
-
 v.fechaVenta<=fin)
 
 &&
 
 (!emp||
-
 v.emprendimiento===emp)
 
 &&
 
 (!persona||
-
 v.vendedorNombre===persona)
 
 &&
 
 (!canal||
-
 v.canalVenta===canal)
 
 );
@@ -344,6 +312,7 @@ filtradas
 );
 
 }
+
 
 function actualizarResumen(data){
 
@@ -398,24 +367,6 @@ vendidos;
 
 
 document.getElementById(
-"ticketPromedio"
-).textContent=
-
-data.length
-
-?
-
-"$"+
-
-(total/data.length)
-.toFixed(2)
-
-:
-
-"$0";
-
-
-document.getElementById(
 "inventarioActual"
 ).textContent=
 
@@ -452,35 +403,19 @@ tabla.innerHTML+=`
 
 <tr>
 
-<td>
-${v.fechaVenta}
-</td>
+<td>${v.fechaVenta}</td>
 
-<td>
-${v.nombreProducto}
-</td>
+<td>${v.nombreProducto}</td>
 
-<td>
-${v.emprendimiento}
-</td>
+<td>${v.emprendimiento}</td>
 
-<td>
-${v.vendedorNombre}
-</td>
+<td>${v.vendedorNombre}</td>
 
-<td>
-${v.canalVenta}
-</td>
+<td>${v.canalVenta}</td>
 
-<td>
-${v.cantidad}
-</td>
+<td>${v.cantidad}</td>
 
-<td>
-
-$${v.total}
-
-</td>
+<td>$${v.total}</td>
 
 </tr>
 
@@ -505,9 +440,7 @@ productos
 
 .filter(p=>
 
-!emp
-
-||
+!emp||
 
 p.emprendedora===emp
 
@@ -519,29 +452,13 @@ tabla.innerHTML+=`
 
 <tr>
 
-<td>
+<td>${p.nombreProducto}</td>
 
-${p.nombreProducto}
+<td>${p.emprendedora}</td>
 
-</td>
+<td>${p.stock}</td>
 
-<td>
-
-${p.emprendedora}
-
-</td>
-
-<td>
-
-${p.stock}
-
-</td>
-
-<td>
-
-${p.estadoProducto}
-
-</td>
+<td>${p.estadoProducto}</td>
 
 </tr>
 
@@ -555,7 +472,6 @@ ${p.estadoProducto}
 function renderTopProductos(data){
 
 const top={};
-
 
 data.forEach(v=>{
 
@@ -571,13 +487,11 @@ Number(v.cantidad);
 
 
 const tabla=
-
 document.getElementById(
 "tablaTopProductos"
 );
 
 if(!tabla)return;
-
 
 tabla.innerHTML="";
 
@@ -594,13 +508,9 @@ tabla.innerHTML+=`
 
 <tr>
 
-<td>
-${p[0]}
-</td>
+<td>${p[0]}</td>
 
-<td>
-${p[1]}
-</td>
+<td>${p[1]}</td>
 
 </tr>
 
@@ -615,24 +525,19 @@ function graficaGlobal(){
 
 const resumen={};
 
-
 ventas.forEach(v=>{
 
 const producto=
 
 productos.find(
 
-p=>
-
-String(p.id)
+p=>String(p.id)
 
 ===
 
 String(v.productoId)
 
-)
-
-||{};
+)||{};
 
 
 const emp=
@@ -650,7 +555,7 @@ resumen[emp]=
 
 +
 
-Number(v.total);
+Number(v.total||0);
 
 });
 
@@ -676,22 +581,37 @@ type:"bar",
 
 data:{
 
-labels:
-Object.keys(
-resumen
-),
+labels:Object.keys(resumen),
 
 datasets:[{
 
-label:
-"Ventas globales",
+label:"Ventas Globales",
 
-data:
-Object.values(
-resumen
-)
+data:Object.values(resumen),
+
+barThickness:35,
+
+maxBarThickness:45
 
 }]
+
+},
+
+options:{
+
+responsive:true,
+
+maintainAspectRatio:false,
+
+plugins:{
+
+legend:{
+
+position:"bottom"
+
+}
+
+}
 
 }
 
@@ -706,7 +626,6 @@ function graficaFiltro(data){
 
 const resumen={};
 
-
 data.forEach(v=>{
 
 resumen[v.nombreProducto]=
@@ -715,7 +634,7 @@ resumen[v.nombreProducto]=
 
 +
 
-Number(v.total);
+Number(v.total||0);
 
 });
 
@@ -741,22 +660,37 @@ type:"bar",
 
 data:{
 
-labels:
-Object.keys(
-resumen
-),
+labels:Object.keys(resumen),
 
 datasets:[{
 
-label:
-"Productos",
+label:"Ventas Filtradas",
 
-data:
-Object.values(
-resumen
-)
+data:Object.values(resumen),
+
+barThickness:28,
+
+maxBarThickness:40
 
 }]
+
+},
+
+options:{
+
+responsive:true,
+
+maintainAspectRatio:false,
+
+plugins:{
+
+legend:{
+
+position:"bottom"
+
+}
+
+}
 
 }
 
@@ -771,16 +705,22 @@ function graficaCanal(data){
 
 const resumen={};
 
-
 data.forEach(v=>{
 
-resumen[v.canalVenta]=
+const canal=
 
-(resumen[v.canalVenta]||0)
+v.canalVenta||
+
+"Sin canal";
+
+
+resumen[canal]=
+
+(resumen[canal]||0)
 
 +
 
-Number(v.total);
+Number(v.total||0);
 
 });
 
@@ -806,632 +746,46 @@ type:"pie",
 
 data:{
 
-labels:
-Object.keys(
-resumen
-),
+labels:Object.keys(resumen),
 
 datasets:[{
 
-data:
-Object.values(
-resumen)
+data:Object.values(resumen)
 
 }]
 
+},
+
+options:{
+
+responsive:true,
+
+maintainAspectRatio:false,
+
+plugins:{
+
+legend:{
+
+position:"bottom"
+
+}
+
 }
 
 }
 
-);
-
 }
-
-
-function generarPDF(){
-
-const { jsPDF } =
-window.jspdf;
-
-const pdf =
-new jsPDF(
-"p",
-"mm",
-"a4"
-);
-
-const fecha=
-new Date()
-.toLocaleString();
-
-
-// TITULO
-
-pdf.setFontSize(18);
-
-pdf.text(
-"Reporte del Sistema",
-15,
-15
-);
-
-pdf.setFontSize(9);
-
-pdf.text(
-"Generado: "+fecha,
-15,
-22
-);
-
-
-// FILTROS
-
-pdf.setFontSize(12);
-
-pdf.text(
-"Filtros aplicados",
-15,
-32
-);
-
-
-pdf.setFontSize(10);
-
-pdf.text(
-
-"Fecha inicio: "+
-
-(
-document
-.getElementById(
-"fechaInicio"
-)
-.value
-
-||
-
-"Todas"
-
-),
-
-15,
-
-40
-
-);
-
-
-pdf.text(
-
-"Fecha fin: "+
-
-(
-document
-.getElementById(
-"fechaFin"
-)
-.value
-
-||
-
-"Todas"
-
-),
-
-15,
-
-46
-
-);
-
-
-pdf.text(
-
-"Emprendimiento: "+
-
-(
-document
-.getElementById(
-"filtroEmprendedora"
-)
-.value
-
-||
-
-"Todos"
-
-),
-
-15,
-
-52
-
-);
-
-
-pdf.text(
-
-"Persona: "+
-
-(
-document
-.getElementById(
-"filtroPersona"
-)
-.value
-
-||
-
-"Todas"
-
-),
-
-15,
-
-58
-
-);
-
-
-pdf.text(
-
-"Canal: "+
-
-(
-document
-.getElementById(
-"filtroCanal"
-)
-.value
-
-||
-
-"Todos"
-
-),
-
-15,
-
-64
-
-);
-
-
-// RESUMEN
-
-pdf.setFontSize(12);
-
-pdf.text(
-"Resumen",
-15,
-75
-);
-
-
-pdf.autoTable({
-
-startY:80,
-
-head:[[
-"Total Ventas",
-"Productos",
-"Inventario",
-"Ticket"
-]],
-
-body:[[
-document
-.getElementById(
-"totalVentas"
-)
-.textContent,
-
-document
-.getElementById(
-"productosVendidos"
-)
-.textContent,
-
-document
-.getElementById(
-"inventarioActual"
-)
-.textContent,
-
-document
-.getElementById(
-"ticketPromedio"
-)
-.textContent
-
-]]
-
-});
-
-
-let y=
-pdf.lastAutoTable
-.finalY+10;
-
-
-// TABLA VENTAS
-
-const ventas=[];
-
-document
-.querySelectorAll(
-"#tablaVentas tr"
-)
-.forEach(f=>{
-
-const fila=[];
-
-f.querySelectorAll(
-"td"
-)
-.forEach(td=>{
-
-fila.push(
-td.innerText
-);
-
-});
-
-if(
-fila.length
-){
-
-ventas.push(
-fila
-);
-
-}
-
-});
-
-
-pdf.text(
-"Detalle Ventas",
-15,
-y
-);
-
-
-pdf.autoTable({
-
-startY:
-y+5,
-
-head:[[
-
-"Fecha",
-"Producto",
-"Emprendimiento",
-"Persona",
-"Canal",
-"Cantidad",
-"Total"
-
-]],
-
-body:
-ventas,
-
-styles:{
-fontSize:8
-}
-
-});
-
-
-y=
-pdf.lastAutoTable
-.finalY+10;
-
-
-// PRODUCTOS MAS VENDIDOS
-
-const top=[];
-
-document
-.querySelectorAll(
-"#tablaTopProductos tr"
-)
-.forEach(f=>{
-
-const fila=[];
-
-f.querySelectorAll(
-"td"
-)
-.forEach(td=>{
-
-fila.push(
-td.innerText
-);
-
-});
-
-if(
-fila.length
-){
-
-top.push(
-fila
-);
-
-}
-
-});
-
-
-pdf.text(
-"Productos Mas Vendidos",
-15,
-y
-);
-
-
-pdf.autoTable({
-
-startY:
-y+5,
-
-head:[[
-
-"Producto",
-"Cantidad"
-
-]],
-
-body:
-top
-
-});
-
-
-y=
-pdf.lastAutoTable
-.finalY+10;
-
-
-// INVENTARIO
-
-const inventario=[];
-
-document
-.querySelectorAll(
-"#tablaInventario tr"
-)
-.forEach(f=>{
-
-const fila=[];
-
-f.querySelectorAll(
-"td"
-)
-.forEach(td=>{
-
-fila.push(
-td.innerText
-);
-
-});
-
-if(
-fila.length
-){
-
-inventario.push(
-fila
-);
-
-}
-
-});
-
-
-pdf.text(
-"Inventario",
-15,
-y
-);
-
-
-pdf.autoTable({
-
-startY:
-y+5,
-
-head:[[
-
-"Producto",
-"Emprendimiento",
-"Stock"
-
-]],
-
-body:
-inventario,
-
-styles:{
-fontSize:8
-}
-
-});
-
-
-y=
-pdf.lastAutoTable
-.finalY+15;
-
-
-// GRAFICAS
-
-const global=
-
-document
-.getElementById(
-"graficoGlobal"
-);
-
-const filtro=
-
-document
-.getElementById(
-"graficoFiltro"
-);
-
-const canal=
-
-document
-.getElementById(
-"graficoCanal"
-);
-
-
-if(
-global
-){
-
-pdf.addPage();
-
-pdf.text(
-"Ventas Globales",
-15,
-15
-);
-
-pdf.addImage(
-
-global.toDataURL(),
-
-"PNG",
-
-15,
-
-25,
-
-180,
-
-80
 
 );
 
 }
 
 
-if(
-filtro
-){
-
-pdf.text(
-
-"Productos Filtrados",
-
-15,
-
-120
-
-);
-
-pdf.addImage(
-
-filtro.toDataURL(),
-
-"PNG",
-
-15,
-
-130,
-
-180,
-
-70
-
-);
-
-}
-
-
-if(
-canal
-){
-
-pdf.addPage();
-
-pdf.text(
-"Canal de Venta",
-15,
-20
-);
-
-pdf.addImage(
-
-canal.toDataURL(),
-
-"PNG",
-
-20,
-
-30,
-
-160,
-
-100
-
-);
-
-}
-
-
-// PIE
-
-const paginas=
-
-pdf.internal
-.getNumberOfPages();
-
-
-for(
-let i=1;
-i<=paginas;
-i++
-){
-
-pdf.setPage(i);
-
-pdf.setFontSize(8);
-
-pdf.text(
-
-"Pagina "
-
-+i+
-
-" de "
-
-+paginas,
-
-170,
-
-290
-
-);
-
-}
-
-pdf.save(
-"ReporteSistema.pdf"
-);
-
-}
 function logout(){
 
 sessionStorage.clear();
 
-location.href=
-"index.html";
+location.href="index.html";
 
 }
 
